@@ -5,162 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freebeat - Create Interface</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
-        }
-        body {
-            background-color: #121212;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* 左侧侧边栏 */
-        .sidebar {
-            width: 200px;
-            background-color: #1E1E1E;
-            padding: 20px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .sidebar-header {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .sidebar-btn-group {
-            display: flex;
-            gap: 5px;
-        }
-        .sidebar-btn {
-            padding: 5px 10px;
-            background-color: #333;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .sidebar-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .sidebar-section .toggle-btn {
-            background-color: #333;
-            border: none;
-            padding: 5px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-        .sidebar-section .toggle-btn .badge {
-            background-color: #007bff;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 10px;
-        }
-        .sidebar-section h4 {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-        .sidebar-section .history-list {
-            font-size: 12px;
-            color: #ddd;
-        }
-        .sidebar-section .history-list .new-task {
-            background-color: #333;
-            padding: 5px;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .sidebar-section .history-item {
-            padding: 5px;
-            font-size: 12px;
-            color: #bbb;
-        }
-        .sidebar-bottom {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .sidebar-bottom a {
-            color: #aaa;
-            font-size: 12px;
-            text-decoration: none;
-        }
-        .sidebar-bottom .language {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            color: #aaa;
-        }
-        .sidebar-bottom .language select {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 2px;
-            border-radius: 2px;
-        }
-        .sidebar-bottom .logo {
-            font-size: 12px;
-            color: #888;
-        }
-
-        /* 主内容区 */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        /* 顶部导航 */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .top-nav .dropdown {
-            background-color: #333;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .top-nav .actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .top-nav .actions .coin {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #0f0;
-        }
-        .top-nav .actions .join-btn {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* 创作区域 - 移除橙色竖线样式 */
+        /* 创作区特有样式 */
         .create-section {
             background-color: #1E1E1E;
             padding: 20px;
@@ -171,7 +16,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* 背景渐变装饰 */
         .create-section::before {
             content: "";
             position: absolute;
@@ -187,7 +31,6 @@
             text-align: center;
             z-index: 2;
         }
-        /* 标签栏 */
         .tag-bar {
             display: flex;
             align-items: center;
@@ -202,12 +45,15 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
+        }
+        .tag:hover {
+            background-color: #555;
         }
         .tag .close {
             font-size: 10px;
             cursor: pointer;
         }
-        /* 输入区域 */
         .input-area {
             background-color: #2C2C2C;
             padding: 10px;
@@ -222,7 +68,9 @@
             font-size: 12px;
             color: #bbb;
         }
-        /* 功能按钮栏 */
+        .input-area input:focus {
+            outline: 1px solid #007bff;
+        }
         .feature-buttons {
             display: flex;
             align-items: center;
@@ -262,7 +110,6 @@
             margin-left: auto;
             cursor: pointer;
         }
-        /* 模式选择栏 */
         .mode-bar {
             display: flex;
             align-items: center;
@@ -296,296 +143,82 @@
             align-items: center;
             gap: 5px;
         }
-
-        /* 教程区 */
-        .tutorials {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .tutorials h3 {
-            font-size: 16px;
-            color: #aaa;
-        }
-        .tutorial-cards {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        .tutorial-card {
-            width: 150px;
-            height: 80px;
-            background-color: #333;
-            border-radius: 4px;
-            flex-shrink: 0;
-        }
-
-        /* 排行榜区 */
-        .charts {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .charts-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .charts-header h3 {
-            font-size: 18px;
-        }
-        .charts-tabs {
-            display: flex;
-            gap: 10px;
-        }
-        .charts-tab {
-            font-size: 12px;
-            color: #aaa;
-            padding: 5px 10px;
-            background-color: #333;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        .charts-tab.active {
-            background-color: #555;
-            color: #fff;
-        }
-        .charts-view {
-            font-size: 12px;
-            color: #aaa;
-            cursor: pointer;
-        }
-        .chart-cards {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        .chart-card {
-            width: 120px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-        .chart-card .card-img {
-            height: 120px;
-            background-color: #555;
-            border-radius: 4px;
-        }
-        .chart-card .card-info {
-            font-size: 12px;
-        }
-        .chart-card .card-info .remix {
-            color: #0f0;
-            font-size: 10px;
-        }
-        .chart-card .card-info .title {
-            font-weight: bold;
-            margin: 2px 0;
-        }
-        .chart-card .card-info .artist {
-            color: #aaa;
-            font-size: 10px;
+        .mode-bar .create-btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <!-- 左侧导航栏 -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <span>freebeat</span>
-        </div>
-        <div class="sidebar-btn-group">
-            <button class="sidebar-btn">Create</button>
-            <button class="sidebar-btn">Edit</button>
-        </div>
-        <div class="sidebar-section">
-            <div class="toggle-btn">
-                <span>Agent</span>
-                <span class="badge">Hot</span>
-            </div>
-            <div class="toggle-btn">
-                <span>ToolBox</span>
-                
-            </div>
-        </div>
-        <div class="sidebar-section">
-            <h4>HISTORY</h4>
-            <div class="history-list">
-                <div class="new-task">
-                    <span>New task</span>
-                </div>
-                <div class="history-item">A dreamy cyberpunk...</div>
-                <div class="history-item">A dreamy cyberpunk...</div>
-                <div class="history-item">A dreamy cyberpunk...</div>
-            </div>
-        </div>
-        <div class="sidebar-bottom">
-            <a href="#">Refer & Earn</a>
-            <a href="#">Subscribe</a>
-            <a href="#">FAQs</a>
-            <div class="language">
-                <span>Language</span>
-                <select>
-                    <option>en</option>
-                    <option>zh</option>
-                </select>
-            </div>
-            <div class="logo">
-                <span>onpiu</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 主内容区 -->
-    <div class="main-content">
-        <!-- 顶部导航 -->
-        <div class="top-nav">
-            <div class="dropdown">
-                <span>Music Video</span>
-            </div>
-            <div class="actions">
-                <div class="coin">
-                    <span>1000</span>
-                </div>
-                <button class="join-btn">Join our Discord</button>
-            </div>
-        </div>
-
-        <!-- 创作区域 -->
-        <div class="create-section">
-            <h2>What do you want to create?</h2>
-            <div class="tag-bar">
-                <div class="tag">Storytelling</div>
-                <div class="tag">
-                    Naam Chalé (O.S. X)
-                    <span class="close">×</span>
-                </div>
-            </div>
-            <div class="input-area">
-                <input type="text" placeholder="Describe the vibe, or let us surprise you by prompting “Make a video for this s">
-            </div>
-            <div class="feature-buttons">
-                <button>
-                    <span>Character</span>
-                </button>
-                <button>
-                    <span>Lyrics</span>
-                </button>
-                <button>
-                    <span>Style</span>
-                </button>
-                <span>Remove watermark</span>
-                <div class="toggle"></div>
-                <div class="edit">✎</div>
-            </div>
-            <div class="mode-bar">
-                <button>Fast</button>
-                <button class="active">Expert</button>
-                <button>Auto</button>
-                <select>
-                    <option>Public</option>
-                </select>
-                <button class="create-btn">
-                    <span>Create</span>
-                    <span>♦</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- 教程区 -->
-        <div class="tutorials">
-            <h3>Agent Feature Tutorials</h3>
-            <div class="tutorial-cards">
-                <div class="tutorial-card"></div>
-                <div class="tutorial-card"></div>
-                <div class="tutorial-card"></div>
-                <div class="tutorial-card"></div>
-                <div class="tutorial-card"></div>
-                <div class="tutorial-card"></div>
-            </div>
-        </div>
-
-        <!-- 排行榜区 -->
-        <div class="charts">
-            <div class="charts-header">
-                <div>
-                    <h3>Top Charts</h3>
-                    <div class="charts-tabs">
-                        <div class="charts-tab active">Billboard 100</div>
-                        <div class="charts-tab">This is Frequency</div>
-                        <div class="charts-tab">New Music Friday</div>
-                        <div class="charts-tab">New Music 2025</div>
-                        <div class="charts-tab">Global Charts</div>
-                    </div>
-                </div>
-                <div class="charts-view">View Charts ></div>
-            </div>
-            <div class="chart-cards">
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">255 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">255 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">125 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">95 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">79 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="card-img"></div>
-                    <div class="card-info">
-                        <div class="remix">52 REMIX</div>
-                        <div class="title">The Fate of Ophelia</div>
-                        <div class="artist">Taylor Swift</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="common.js"></script>
     <script>
-        // 创作页面功能
+        // 初始化公共组件
+        CommonComponents.initCommon();
+        
+        // 页面加载完成后渲染组件
         document.addEventListener('DOMContentLoaded', function() {
+            // 渲染侧边栏
+            document.body.innerHTML = CommonComponents.getSidebarHTML() + `
+                <div class="main-content">
+                    ${CommonComponents.getTopNavHTML()}
+                    
+                    <!-- 创作区域 -->
+                    <div class="create-section">
+                        <h2>What do you want to create?</h2>
+                        <div class="tag-bar">
+                            <div class="tag" id="style-tag">Storytelling</div>
+                            <div class="tag" id="music-tag">
+                                选择音乐
+                                <span class="close">×</span>
+                            </div>
+                        </div>
+                        <div class="input-area">
+                            <input type="text" placeholder="Describe the vibe, or let us surprise you by prompting 'Make a video for this song'">
+                        </div>
+                        <div class="feature-buttons">
+                            <button>
+                                <span>Character</span>
+                            </button>
+                            <button>
+                                <span>Lyrics</span>
+                            </button>
+                            <button>
+                                <span>Style</span>
+                            </button>
+                            <span>Remove watermark</span>
+                            <div class="toggle"></div>
+                            <div class="edit">✎</div>
+                        </div>
+                        <div class="mode-bar">
+                            <button>Fast</button>
+                            <button class="active">Expert</button>
+                            <button>Auto</button>
+                            <select>
+                                <option>Public</option>
+                            </select>
+                            <button class="create-btn">
+                                <span>Create</span>
+                                <span>♦</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    ${CommonComponents.getTutorialsHTML()}
+                    ${CommonComponents.getChartsHTML()}
+                </div>
+            `;
+
+            // 初始化创作页面功能
+            initCreatePage();
+        });
+
+        // 创作页面功能
+        function initCreatePage() {
             // 显示之前选择的风格和音乐
             displaySelectedOptions();
 
             // 修改风格功能
-            const styleTag = document.querySelector('.tag-bar .tag:first-child');
+            const styleTag = document.getElementById('style-tag');
             if (styleTag) {
-                styleTag.style.cursor = 'pointer';
                 styleTag.addEventListener('click', function() {
                     if (confirm('要重新选择风格吗？')) {
                         window.location.href = 'index.html';
@@ -593,12 +226,17 @@
                 });
             }
 
-            // 修改音乐功能 - 点击音乐标签
-            const musicTag = document.querySelector('.tag-bar .tag:nth-child(2)');
+            // 修改音乐功能
+            const musicTag = document.getElementById('music-tag');
             if (musicTag) {
-                musicTag.style.cursor = 'pointer';
-                musicTag.addEventListener('click', function() {
-                    if (confirm('要重新选择音乐吗？')) {
+                musicTag.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('close')) {
+                        e.stopPropagation();
+                        if (confirm('要移除这首音乐吗？')) {
+                            localStorage.removeItem('selectedMusic');
+                            musicTag.innerHTML = '选择音乐 <span class="close">×</span>';
+                        }
+                    } else {
                         window.location.href = 'music.html';
                     }
                 });
@@ -614,23 +252,13 @@
                         return;
                     }
                     
-                    // 开始创作
                     alert('开始创作：' + inputText);
                     console.log('创作内容:', inputText);
                     console.log('选中风格:', localStorage.getItem('selectedStyle'));
                     console.log('选中音乐:', localStorage.getItem('selectedMusic'));
                 });
             }
-
-            // 返回首页功能
-            const logo = document.querySelector('.sidebar-header');
-            if (logo) {
-                logo.style.cursor = 'pointer';
-                logo.addEventListener('click', function() {
-                    window.location.href = 'index.html';
-                });
-            }
-        });
+        }
 
         // 显示选中的选项
         function displaySelectedOptions() {
@@ -638,54 +266,18 @@
             const selectedMusic = localStorage.getItem('selectedMusic');
 
             // 更新风格标签
-            const styleTag = document.querySelector('.tag-bar .tag:first-child');
+            const styleTag = document.getElementById('style-tag');
             if (selectedStyle && styleTag) {
                 styleTag.textContent = selectedStyle;
             }
 
             // 更新音乐标签
-            const musicTag = document.querySelector('.tag-bar .tag:nth-child(2)');
+            const musicTag = document.getElementById('music-tag');
             if (selectedMusic && musicTag) {
                 const music = JSON.parse(selectedMusic);
                 musicTag.innerHTML = `${music.title} - ${music.artist} <span class="close">×</span>`;
-                
-                // 为关闭按钮添加功能
-                const closeBtn = musicTag.querySelector('.close');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (confirm('要移除这首音乐吗？')) {
-                            localStorage.removeItem('selectedMusic');
-                            musicTag.innerHTML = '选择音乐 <span class="close">×</span>';
-                        }
-                    });
-                }
-            } else if (musicTag) {
-                musicTag.innerHTML = '选择音乐 <span class="close">×</span>';
-                musicTag.addEventListener('click', function() {
-                    window.location.href = 'music.html';
-                });
             }
         }
     </script>
-
-    <style>
-        /* 添加交互样式 */
-        .tag:hover {
-            background-color: #555 !important;
-        }
-        
-        .sidebar-header:hover {
-            color: #007bff;
-        }
-        
-        .create-btn:hover {
-            background-color: #0056b3 !important;
-        }
-        
-        .input-area input:focus {
-            outline: 1px solid #007bff;
-        }
-    </style>
 </body>
 </html>
