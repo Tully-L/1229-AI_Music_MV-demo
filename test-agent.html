@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent 功能测试</title>
+</head>
+<body>
+    <script src="common.js"></script>
+    <script>
+        // 初始化公共组件
+        CommonComponents.initCommon();
+
+        // 页面加载完成后渲染组件
+        document.addEventListener('DOMContentLoaded', function () {
+            // 等待响应式导航栏初始化完成
+            setTimeout(() => {
+                // 确保主内容区域存在
+                let mainContent = document.querySelector('.main-content');
+                if (!mainContent) {
+                    mainContent = document.createElement('div');
+                    mainContent.className = 'main-content';
+                    document.body.appendChild(mainContent);
+                }
+
+                // 渲染测试页面内容
+                mainContent.innerHTML = `
+                    ${CommonComponents.getTopNavHTML()}
+                    
+                    <div style="text-align: center; padding: 50px;">
+                        <h1>Agent 功能测试页面</h1>
+                        <p style="color: #aaa; margin: 20px 0;">点击左侧导航栏的 "Agent" 按钮测试优化后的交互效果</p>
+                        <div style="background-color: #1E1E1E; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>优化内容：</h3>
+                            <ul style="text-align: left; color: #bbb; line-height: 1.6;">
+                                <li>🎯 核心 AI 功能：智能推荐、参数优化、创意灵感</li>
+                                <li>🚀 高级 AI 助手：风格顾问、趋势分析、质量增强</li>
+                                <li>🧪 实验性功能：声音克隆、情感同步</li>
+                                <li>✨ 优化的视觉效果和交互动画</li>
+                                <li>🎨 保持统一的设计风格和颜色主题</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                // 初始化公共交互功能
+                CommonComponents.initCommonInteractions();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
