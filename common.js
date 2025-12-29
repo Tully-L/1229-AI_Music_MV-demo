@@ -516,8 +516,7 @@ const CommonComponents = {
                 <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+2');"></div>
                 <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+3');"></div>
                 <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+4');"></div>
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+5');"></div>
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+6');"></div>
+
             </div>
         </div>
     `,
