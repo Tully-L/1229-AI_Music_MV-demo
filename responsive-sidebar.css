@@ -1,0 +1,498 @@
+/* 响应式固定左侧导航栏核心样式 */
+
+/* 重置和基础设置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 导航栏容器 - 核心固定定位 */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 9999;
+    background-color: #1E1E1E;
+    border-right: 1px solid #333;
+    transform: none; /* 禁用缩放变形 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.3s ease, transform 0.3s ease;
+    
+    /* 桌面端默认宽度 */
+    width: 260px;
+}
+
+/* 导航栏内容区域 */
+.sidebar-content {
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* 导航栏头部 */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-header:hover {
+    background-color: #333;
+    color: #007bff;
+}
+
+.sidebar-header .logo-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.sidebar-header .logo-text {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* 汉堡菜单按钮 - 仅移动端显示 */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 10001;
+    background-color: #333;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background-color: #555;
+}
+
+/* 导航按钮组 */
+.sidebar-btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sidebar-btn {
+    padding: 10px 15px;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 80px;
+    min-height: 40px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.sidebar-btn:hover {
+    background-color: #555;
+}
+
+.sidebar-btn.primary {
+    background-color: #007bff;
+}
+
+.sidebar-btn.primary:hover {
+    background-color: #0056b3;
+}
+
+/* 导航功能区块 */
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-section h4 {
+    font-size: 12px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.toggle-btn {
+    background-color: #333;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background-color: #555;
+}
+
+.toggle-btn .badge {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+/* 历史记录区域 */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.new-task {
+    background-color: #333;
+    padding: 12px 15px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-height: 44px;
+}
+
+.new-task:hover {
+    background-color: #555;
+}
+
+.history-item {
+    padding: 8px 15px;
+    font-size: 12px;
+    color: #bbb;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item:hover {
+    background-color: #333;
+}
+
+/* 底部区域 */
+.sidebar-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.sidebar-bottom a {
+    color: #aaa;
+    font-size: 12px;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-bottom a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.language {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #aaa;
+    padding: 8px;
+}
+
+.language select {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.logo {
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+}
+
+/* 主内容区域适配 */
+.main-content {
+    margin-left: 260px; /* 默认桌面端导航栏宽度 */
+    min-height: 100vh;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+/* 遮罩层 - 移动端展开时使用 */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 滚动条美化 */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #1E1E1E;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* ===== 响应式断点适配 ===== */
+
+/* 平板端适配 (768px - 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+    
+    .main-content {
+        margin-left: 220px;
+    }
+    
+    .sidebar-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+        min-width: 70px;
+    }
+    
+    .sidebar-header {
+        font-size: 16px;
+    }
+    
+    .toggle-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* 移动端适配 (<768px) */
+@media (max-width: 767px) {
+    /* 显示汉堡菜单按钮 */
+    .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* 默认折叠状态 */
+    .sidebar {
+        width: 60px;
+        transform: translateX(-60px);
+    }
+    
+    .sidebar.collapsed {
+        transform: translateX(-60px);
+    }
+    
+    /* 展开状态 */
+    .sidebar.expanded {
+        width: 240px;
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 主内容区域适配 */
+    .main-content {
+        margin-left: 0;
+        padding: 70px 15px 20px 15px; /* 顶部留出汉堡按钮空间 */
+    }
+    
+    /* 显示遮罩层 */
+    .sidebar-overlay {
+        display: block;
+    }
+    
+    /* 折叠状态下隐藏文字，仅显示图标 */
+    .sidebar.collapsed .logo-text,
+    .sidebar.collapsed .sidebar-btn span,
+    .sidebar.collapsed .toggle-btn span:not(.badge),
+    .sidebar.collapsed .history-item,
+    .sidebar.collapsed .sidebar-bottom a,
+    .sidebar.collapsed .language span,
+    .sidebar.collapsed .logo span {
+        display: none;
+    }
+    
+    .sidebar.collapsed .sidebar-btn {
+        min-width: 40px;
+        padding: 10px;
+        justify-content: center;
+    }
+    
+    .sidebar.collapsed .toggle-btn {
+        justify-content: center;
+        padding: 12px 10px;
+    }
+    
+    .sidebar.collapsed .badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    
+    /* 展开状态样式调整 */
+    .sidebar.expanded .sidebar-content {
+        padding: 70px 15px 20px 15px; /* 顶部留出关闭按钮空间 */
+    }
+}
+
+/* 超小屏幕适配 (<480px) */
+@media (max-width: 479px) {
+    .sidebar.collapsed {
+        width: 50px;
+        transform: translateX(-50px);
+    }
+    
+    .sidebar.expanded {
+        width: 200px;
+    }
+    
+    .sidebar-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .sidebar.collapsed .sidebar-btn {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 8px;
+    }
+    
+    .sidebar.collapsed .toggle-btn {
+        min-height: 36px;
+        padding: 8px;
+    }
+}
+
+/* 超宽屏幕适配 (>=2560px) */
+@media (min-width: 2560px) {
+    .sidebar {
+        width: 260px; /* 保持固定宽度，不随屏幕拉伸 */
+    }
+    
+    .main-content {
+        margin-left: 260px;
+    }
+}
+
+/* 屏幕缩放适配 */
+@media (max-resolution: 1dppx) {
+    .sidebar {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-resolution: 2dppx) {
+    .sidebar {
+        font-size: 1rem;
+    }
+}
+
+/* 兼容性处理 - IE/旧版浏览器降级 */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .sidebar {
+        position: absolute;
+        width: 15%;
+    }
+    
+    .main-content {
+        margin-left: 15%;
+    }
+}
+
+/* 打印样式 */
+@media print {
+    .sidebar {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* 高对比度模式适配 */
+@media (prefers-contrast: high) {
+    .sidebar {
+        border-right: 2px solid #fff;
+    }
+    
+    .sidebar-btn,
+    .toggle-btn {
+        border: 1px solid #666;
+    }
+}
+
+/* 减少动画模式适配 */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar-btn,
+    .toggle-btn,
+    .sidebar-overlay {
+        transition: none;
+    }
+}

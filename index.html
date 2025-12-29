@@ -81,9 +81,18 @@
 
         // 页面加载完成后渲染组件
         document.addEventListener('DOMContentLoaded', function () {
-            // 渲染侧边栏
-            document.body.innerHTML = CommonComponents.getSidebarHTML() + `
-                <div class="main-content">
+            // 等待响应式导航栏初始化完成
+            setTimeout(() => {
+                // 确保主内容区域存在
+                let mainContent = document.querySelector('.main-content');
+                if (!mainContent) {
+                    mainContent = document.createElement('div');
+                    mainContent.className = 'main-content';
+                    document.body.appendChild(mainContent);
+                }
+
+                // 渲染页面内容
+                mainContent.innerHTML = `
                     ${CommonComponents.getTopNavHTML()}
                     
                     <!-- 风格选择区 -->
@@ -111,11 +120,14 @@
 
                     ${CommonComponents.getTutorialsHTML()}
                     ${CommonComponents.getChartsHTML()}
-                </div>
-            `;
+                `;
 
-            // 初始化风格选择功能
-            initStyleSelector();
+                // 初始化公共交互功能
+                CommonComponents.initCommonInteractions();
+                
+                // 初始化风格选择功能
+                initStyleSelector();
+            }, 100); // 等待导航栏初始化
         });
 
         // 风格选择功能
@@ -124,17 +136,87 @@
             styleCards.forEach(card => {
                 card.addEventListener('click', function () {
                     const styleName = this.getAttribute('data-style');
-                    localStorage.setItem('selectedStyle', styleName);
-                    window.location.href = 'music.html';
+                    
+                    // 移除其他卡片的选中状态
+                    styleCards.forEach(c => {
+                        c.style.border = 'none';
+                        c.style.backgroundColor = '#2C2C2C';
+                    });
+                    
+                    // 高亮当前卡片
+                    this.style.border = '2px solid #007bff';
+                    this.style.backgroundColor = '#333';
+                    
+                    // 弹出确认选择弹窗
+                    CommonComponents.ModalManager.create({
+                        title: '确认选择',
+                        content: `<p style="margin: 0; line-height: 1.5;">您选择了 <strong>${styleName}</strong> 风格，是否确认进入音乐选择页面？</p>`,
+                        width: '500px',
+                        buttons: [
+                            {
+                                text: '重新选择',
+                                type: 'secondary',
+                                onClick: () => {
+                                    // 取消选中状态
+                                    styleCards.forEach(c => {
+                                        c.style.border = 'none';
+                                        c.style.backgroundColor = '#2C2C2C';
+                                    });
+                                }
+                            },
+                            {
+                                text: '确认进入音乐页面',
+                                type: 'primary',
+                                onClick: () => {
+                                    localStorage.setItem('selectedStyle', styleName);
+                                    CommonComponents.ToastManager.show(`已选择 ${styleName} 风格`, 'success');
+                                    setTimeout(() => {
+                                        window.location.href = 'music.html';
+                                    }, 500);
+                                }
+                            },
+                            {
+                                text: '关闭',
+                                type: 'secondary',
+                                onClick: () => {
+                                    // 取消选中状态
+                                    styleCards.forEach(c => {
+                                        c.style.border = 'none';
+                                        c.style.backgroundColor = '#2C2C2C';
+                                    });
+                                }
+                            }
+                        ]
+                    });
                 });
             });
 
-            // Skip按钮功能
+            // Skip按钮功能 - 居中确认弹窗
             const skipBtn = document.querySelector('.style-selector .skip');
             if (skipBtn) {
                 skipBtn.addEventListener('click', function () {
-                    localStorage.removeItem('selectedStyle');
-                    window.location.href = 'music.html';
+                    CommonComponents.ModalManager.create({
+                        title: '跳过风格选择',
+                        content: '<p style="margin: 0; line-height: 1.5;">是否跳过风格选择，直接进入音乐页面？</p>',
+                        width: '400px',
+                        buttons: [
+                            {
+                                text: '取消',
+                                type: 'secondary'
+                            },
+                            {
+                                text: '确认跳过',
+                                type: 'primary',
+                                onClick: () => {
+                                    localStorage.removeItem('selectedStyle');
+                                    CommonComponents.ToastManager.show('已跳过风格选择', 'info');
+                                    setTimeout(() => {
+                                        window.location.href = 'music.html';
+                                    }, 500);
+                                }
+                            }
+                        ]
+                    });
                 });
             }
         }

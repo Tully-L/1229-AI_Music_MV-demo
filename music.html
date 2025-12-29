@@ -165,6 +165,10 @@
                             <div class="music-search">
                                 <select>
                                     <option>All</option>
+                                    <option>Pop</option>
+                                    <option>Rock</option>
+                                    <option>Hip-Hop</option>
+                                    <option>Electronic</option>
                                 </select>
                                 <input type="text" placeholder="Search music">
                             </div>
@@ -234,6 +238,9 @@
                 </div>
             `;
 
+            // 初始化公共交互功能
+            CommonComponents.initCommonInteractions();
+            
             // 初始化音乐选择功能
             initMusicSelector();
         });
@@ -245,30 +252,93 @@
                 console.log('选中的风格:', selectedStyle);
             }
 
-            // 为音乐项目添加点击选择功能
-            const musicItems = document.querySelectorAll('.music-item');
-            musicItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // 移除其他项目的选中状态
-                    musicItems.forEach(i => i.classList.remove('selected'));
-                    // 添加选中状态
-                    this.classList.add('selected');
+            // 音乐标签切换功能 - 页面内无刷新切换
+            const musicTabs = document.querySelectorAll('.music-tab');
+            musicTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    musicTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
                     
-                    // 保存选中的音乐信息
-                    const selectedMusic = {
-                        title: this.getAttribute('data-title'),
-                        artist: this.getAttribute('data-artist'),
-                        duration: this.getAttribute('data-duration')
-                    };
+                    const tabName = this.textContent;
+                    CommonComponents.ToastManager.show(`已切换到 ${tabName}`, 'info');
                     
-                    localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
-                    
-                    // 自动跳转到创作页面
-                    setTimeout(() => {
-                        window.location.href = 'create.html';
-                    }, 500);
+                    // 这里可以添加实际的内容切换逻辑
                 });
             });
+
+            // 音乐类型筛选功能 - 页面内实时替换
+            const genreSelect = document.querySelector('.music-search select');
+            if (genreSelect) {
+                genreSelect.addEventListener('change', function() {
+                    const selectedGenre = this.value;
+                    CommonComponents.ToastManager.show(`正在筛选 ${selectedGenre} 类型音乐`, 'info');
+                    
+                    // 模拟筛选结果为空的情况
+                    if (selectedGenre === 'Electronic') {
+                        // 显示暂无该类型音乐的静态提示
+                        const musicList = document.querySelector('.music-list');
+                        const originalContent = musicList.innerHTML;
+                        musicList.innerHTML = '<div style="text-align: center; padding: 40px; color: #aaa;">暂无该类型音乐</div>';
+                        
+                        setTimeout(() => {
+                            musicList.innerHTML = originalContent;
+                            initMusicItems(); // 重新初始化音乐项目
+                        }, 2000);
+                    }
+                });
+            }
+
+            // 音乐搜索功能
+            const searchInput = document.querySelector('.music-search input');
+            if (searchInput) {
+                let searchTimeout;
+                
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length > 2) {
+                        searchTimeout = setTimeout(() => {
+                            // 模拟搜索
+                            console.log('搜索音乐：', query);
+                            
+                            // 模拟搜索结果为空
+                            if (query.toLowerCase().includes('test')) {
+                                CommonComponents.ModalManager.create({
+                                    title: '无匹配结果',
+                                    content: '<p style="margin: 0; line-height: 1.5;">未找到相关音乐，是否调整搜索关键词？</p>',
+                                    width: '400px',
+                                    buttons: [
+                                        {
+                                            text: '清空输入框',
+                                            type: 'secondary',
+                                            onClick: () => {
+                                                searchInput.value = '';
+                                            }
+                                        },
+                                        {
+                                            text: '关闭',
+                                            type: 'primary'
+                                        }
+                                    ]
+                                });
+                            }
+                        }, 500);
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            CommonComponents.ToastManager.show(`搜索: ${query}`, 'info');
+                        }
+                    }
+                });
+            }
+
+            // 初始化音乐项目
+            initMusicItems();
 
             // Skip按钮功能
             const skipBtn = document.querySelector('.music-selector .skip');
@@ -279,13 +349,285 @@
                 });
             }
 
-            // Upload music按钮功能
+            // Upload music按钮功能 - 居中上传弹窗
             const uploadBtn = document.querySelector('.music-upload');
             if (uploadBtn) {
                 uploadBtn.addEventListener('click', function() {
-                    alert('音乐上传功能');
+                    const uploadContent = `
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="border: 2px dashed #555; padding: 30px; text-align: center; border-radius: 4px;">
+                                <p style="margin: 0 0 10px 0; color: #aaa;">选择音乐文件或拖拽到此处</p>
+                                <input type="file" id="music-file" accept="audio/*" style="display: none;">
+                                <button id="select-file" style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">选择文件</button>
+                            </div>
+                            <div id="upload-progress" style="display: none;">
+                                <p style="margin: 0 0 10px 0;">上传进度:</p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <p id="progress-text" style="margin: 10px 0 0 0; text-align: center;">0%</p>
+                            </div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '上传本地音乐',
+                        content: uploadContent,
+                        width: '600px',
+                        buttons: [
+                            {
+                                text: '取消',
+                                type: 'secondary'
+                            }
+                        ],
+                        closable: true
+                    });
+
+                    // 文件选择功能
+                    const fileInput = modal.querySelector('#music-file');
+                    const selectBtn = modal.querySelector('#select-file');
+                    const progressDiv = modal.querySelector('#upload-progress');
+                    const progressFill = modal.querySelector('#progress-fill');
+                    const progressText = modal.querySelector('#progress-text');
+
+                    selectBtn.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // 显示进度条
+                            progressDiv.style.display = 'block';
+                            
+                            // 模拟上传进度
+                            let progress = 0;
+                            const interval = setInterval(() => {
+                                progress += Math.random() * 15;
+                                if (progress >= 100) {
+                                    progress = 100;
+                                    clearInterval(interval);
+                                    
+                                    // 上传完成
+                                    setTimeout(() => {
+                                        modal.querySelector('.modal-content').innerHTML = `
+                                            <div style="text-align: center;">
+                                                <p style="margin: 0 0 15px 0; color: #28a745;">✓ 上传完成</p>
+                                                <p style="margin: 0 0 15px 0;">文件: ${file.name}</p>
+                                                <p style="margin: 0;">是否使用该音乐？</p>
+                                            </div>
+                                        `;
+                                        
+                                        // 更新按钮
+                                        const actions = modal.querySelector('.modal-actions');
+                                        actions.innerHTML = `
+                                            <button class="modal-btn secondary">取消</button>
+                                            <button class="modal-btn primary" id="use-music">使用</button>
+                                        `;
+                                        
+                                        // 使用音乐按钮
+                                        modal.querySelector('#use-music').addEventListener('click', () => {
+                                            const selectedMusic = {
+                                                title: file.name.replace(/\.[^/.]+$/, ""),
+                                                artist: '本地上传',
+                                                duration: '未知'
+                                            };
+                                            localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
+                                            CommonComponents.ToastManager.show('已选择上传的音乐', 'success');
+                                            CommonComponents.ModalManager.close(modal);
+                                            setTimeout(() => {
+                                                window.location.href = 'create.html';
+                                            }, 1000);
+                                        });
+                                        
+                                        modal.querySelector('.modal-btn.secondary').addEventListener('click', () => {
+                                            CommonComponents.ModalManager.close(modal);
+                                        });
+                                    }, 500);
+                                }
+                                
+                                progressFill.style.width = progress + '%';
+                                progressText.textContent = Math.round(progress) + '%';
+                            }, 200);
+                        }
+                    });
                 });
             }
+
+            // SoundCloud 导入功能 - 居中导入弹窗
+            const soundcloudLink = document.querySelector('.music-soundcloud span');
+            if (soundcloudLink) {
+                soundcloudLink.style.cursor = 'pointer';
+                soundcloudLink.addEventListener('click', function() {
+                    const soundcloudContent = `
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <p style="margin: 0;">请输入 SoundCloud 链接：</p>
+                            <input type="url" id="soundcloud-url" placeholder="https://soundcloud.com/..." style="width: 100%; padding: 8px; background-color: #333; border: none; border-radius: 4px; color: #fff;">
+                            <div id="verify-result" style="display: none;"></div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: 'SoundCloud 导入',
+                        content: soundcloudContent,
+                        width: '600px',
+                        buttons: [
+                            {
+                                text: '取消',
+                                type: 'secondary'
+                            },
+                            {
+                                text: '验证链接',
+                                type: 'primary',
+                                onClick: () => {
+                                    const urlInput = modal.querySelector('#soundcloud-url');
+                                    const url = urlInput.value.trim();
+                                    const resultDiv = modal.querySelector('#verify-result');
+                                    
+                                    if (!url) {
+                                        CommonComponents.ToastManager.show('请输入链接', 'warning');
+                                        return false;
+                                    }
+                                    
+                                    if (!url.includes('soundcloud.com')) {
+                                        resultDiv.style.display = 'block';
+                                        resultDiv.innerHTML = '<p style="margin: 0; color: #dc3545;">链接无效，请输入正确的 SoundCloud 链接</p>';
+                                        return false;
+                                    }
+                                    
+                                    // 模拟验证过程
+                                    resultDiv.style.display = 'block';
+                                    resultDiv.innerHTML = '<p style="margin: 0; color: #ffc107;">验证中...</p>';
+                                    
+                                    setTimeout(() => {
+                                        // 模拟验证成功
+                                        resultDiv.innerHTML = `
+                                            <div style="padding: 15px; background-color: #333; border-radius: 4px;">
+                                                <h4 style="margin: 0 0 10px 0; color: #28a745;">✓ 验证成功</h4>
+                                                <p style="margin: 0 0 5px 0;"><strong>标题:</strong> Sample Track</p>
+                                                <p style="margin: 0 0 5px 0;"><strong>艺术家:</strong> Sample Artist</p>
+                                                <p style="margin: 0;"><strong>时长:</strong> 3:30</p>
+                                            </div>
+                                        `;
+                                        
+                                        // 更新按钮
+                                        const actions = modal.querySelector('.modal-actions');
+                                        actions.innerHTML = `
+                                            <button class="modal-btn secondary">取消</button>
+                                            <button class="modal-btn primary" id="import-music">导入使用</button>
+                                        `;
+                                        
+                                        modal.querySelector('#import-music').addEventListener('click', () => {
+                                            const selectedMusic = {
+                                                title: 'Sample Track',
+                                                artist: 'Sample Artist',
+                                                duration: '3:30'
+                                            };
+                                            localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
+                                            CommonComponents.ToastManager.show('SoundCloud 音乐导入成功', 'success');
+                                            CommonComponents.ModalManager.close(modal);
+                                            setTimeout(() => {
+                                                window.location.href = 'create.html';
+                                            }, 1000);
+                                        });
+                                        
+                                        modal.querySelector('.modal-btn.secondary').addEventListener('click', () => {
+                                            CommonComponents.ModalManager.close(modal);
+                                        });
+                                    }, 2000);
+                                    
+                                    return false; // 不关闭弹窗
+                                }
+                            }
+                        ]
+                    });
+                });
+            }
+        }
+
+        // 音乐项目点击功能
+        function initMusicItems() {
+            const musicItems = document.querySelectorAll('.music-item');
+            musicItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const title = this.getAttribute('data-title');
+                    const artist = this.getAttribute('data-artist');
+                    const duration = this.getAttribute('data-duration');
+
+                    // 创建音乐详情弹窗
+                    const musicDetailContent = `
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div style="display: flex; gap: 20px;">
+                                <div style="width: 120px; height: 120px; background-color: #555; border-radius: 4px; flex-shrink: 0;"></div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 10px 0;">${title}</h3>
+                                    <p style="margin: 0 0 5px 0; color: #aaa;">艺术家: ${artist || '未知'}</p>
+                                    <p style="margin: 0 0 5px 0; color: #aaa;">时长: ${duration}</p>
+                                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                                        <button id="play-preview" style="background-color: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">▶ 试听</button>
+                                        <span style="color: #aaa; font-size: 12px;">点击试听音乐</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '音乐详情',
+                        content: musicDetailContent,
+                        width: '700px',
+                        buttons: [
+                            {
+                                text: '加入收藏',
+                                type: 'secondary',
+                                onClick: () => {
+                                    CommonComponents.ToastManager.show('已加入收藏', 'success');
+                                    return false; // 不关闭弹窗
+                                }
+                            },
+                            {
+                                text: '选择使用',
+                                type: 'primary',
+                                onClick: () => {
+                                    // 保存选中的音乐信息
+                                    const selectedMusic = {
+                                        title: title,
+                                        artist: artist || '未知',
+                                        duration: duration
+                                    };
+                                    
+                                    localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
+                                    CommonComponents.ToastManager.show('已选择该音乐', 'success');
+                                    
+                                    // 跳转到创作页面
+                                    setTimeout(() => {
+                                        window.location.href = 'create.html';
+                                    }, 1000);
+                                }
+                            },
+                            {
+                                text: '关闭',
+                                type: 'secondary'
+                            }
+                        ]
+                    });
+
+                    // 试听功能
+                    const playBtn = modal.querySelector('#play-preview');
+                    let isPlaying = false;
+                    playBtn.addEventListener('click', () => {
+                        if (!isPlaying) {
+                            isPlaying = true;
+                            playBtn.textContent = '⏸ 暂停';
+                            CommonComponents.ToastManager.show('正在播放...', 'info');
+                        } else {
+                            isPlaying = false;
+                            playBtn.textContent = '▶ 试听';
+                            CommonComponents.ToastManager.show('已暂停', 'info');
+                        }
+                    });
+                });
+            });
         }
     </script>
 </body>

@@ -175,25 +175,27 @@
                             <input type="text" placeholder="Describe the vibe, or let us surprise you by prompting 'Make a video for this song'">
                         </div>
                         <div class="feature-buttons">
-                            <button>
+                            <button id="character-btn">
                                 <span>Character</span>
                             </button>
-                            <button>
+                            <button id="lyrics-btn">
                                 <span>Lyrics</span>
                             </button>
-                            <button>
+                            <button id="style-btn">
                                 <span>Style</span>
                             </button>
                             <span>Remove watermark</span>
-                            <div class="toggle"></div>
-                            <div class="edit">✎</div>
+                            <div class="toggle" id="watermark-toggle"></div>
+                            <div class="edit" id="edit-btn">✎</div>
                         </div>
                         <div class="mode-bar">
-                            <button>Fast</button>
-                            <button class="active">Expert</button>
-                            <button>Auto</button>
-                            <select>
-                                <option>Public</option>
+                            <button class="mode-btn" data-mode="fast">Fast</button>
+                            <button class="mode-btn active" data-mode="expert">Expert</button>
+                            <button class="mode-btn" data-mode="auto">Auto</button>
+                            <select id="privacy-select">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                <option value="unlisted">Unlisted</option>
                             </select>
                             <button class="create-btn">
                                 <span>Create</span>
@@ -207,8 +209,14 @@
                 </div>
             `;
 
+            // 初始化公共交互功能
+            CommonComponents.initCommonInteractions();
+            
             // 初始化创作页面功能
             initCreatePage();
+            
+            // 初始化自动保存功能
+            initAutoSave();
         });
 
         // 创作页面功能
@@ -216,46 +224,495 @@
             // 显示之前选择的风格和音乐
             displaySelectedOptions();
 
-            // 修改风格功能
+            // 修改风格功能 - 居中确认弹窗
             const styleTag = document.getElementById('style-tag');
             if (styleTag) {
+                styleTag.style.cursor = 'pointer';
                 styleTag.addEventListener('click', function() {
-                    if (confirm('要重新选择风格吗？')) {
-                        window.location.href = 'index.html';
-                    }
+                    CommonComponents.ModalManager.confirm(
+                        '要重新选择风格吗？这将返回到风格选择页面。',
+                        () => {
+                            window.location.href = 'index.html';
+                        }
+                    );
                 });
             }
 
-            // 修改音乐功能
+            // 修改音乐功能 - 居中确认弹窗
             const musicTag = document.getElementById('music-tag');
             if (musicTag) {
                 musicTag.addEventListener('click', function(e) {
                     if (e.target.classList.contains('close')) {
                         e.stopPropagation();
-                        if (confirm('要移除这首音乐吗？')) {
-                            localStorage.removeItem('selectedMusic');
-                            musicTag.innerHTML = '选择音乐 <span class="close">×</span>';
-                        }
+                        CommonComponents.ModalManager.confirm(
+                            '是否移除当前选择的音乐？移除后需重新选择。',
+                            () => {
+                                localStorage.removeItem('selectedMusic');
+                                musicTag.innerHTML = '选择音乐 <span class="close">×</span>';
+                                CommonComponents.ToastManager.show('已移除音乐', 'info');
+                            }
+                        );
                     } else {
                         window.location.href = 'music.html';
                     }
                 });
             }
 
-            // 创作按钮功能
-            const createBtn = document.querySelector('.create-btn');
-            if (createBtn) {
-                createBtn.addEventListener('click', function() {
-                    const inputText = document.querySelector('.input-area input').value;
-                    if (inputText.trim() === '') {
-                        alert('请输入创作内容！');
+            // Character 按钮功能 - 居中选择弹窗
+            const characterBtn = document.getElementById('character-btn');
+            if (characterBtn) {
+                characterBtn.addEventListener('click', function() {
+                    const characterOptions = `
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div class="character-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">卡通声线</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">可爱活泼的动画角色声音</p>
+                            </div>
+                            <div class="character-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">真人声线</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">自然真实的人声效果</p>
+                            </div>
+                            <div class="character-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">机械声线</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">科幻感十足的电子音效</p>
+                            </div>
+                            <div class="character-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">自定义角色</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">上传自己的角色模型</p>
+                            </div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '选择角色',
+                        content: characterOptions,
+                        width: '500px',
+                        buttons: [
+                            {
+                                text: '关闭',
+                                type: 'secondary'
+                            }
+                        ]
+                    });
+
+                    // 为角色选项添加点击事件
+                    const options = modal.querySelectorAll('.character-option');
+                    options.forEach((option, index) => {
+                        option.addEventListener('click', () => {
+                            const characters = ['卡通声线', '真人声线', '机械声线', '自定义角色'];
+                            CommonComponents.ToastManager.show(`已选择 ${characters[index]}`, 'success');
+                            CommonComponents.ModalManager.close(modal);
+                        });
+                    });
+                });
+            }
+
+            // Lyrics 按钮功能 - 居中选择弹窗
+            const lyricsBtn = document.getElementById('lyrics-btn');
+            if (lyricsBtn) {
+                lyricsBtn.addEventListener('click', function() {
+                    const lyricsOptions = `
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="lyrics-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">自动生成</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">AI 根据音乐风格自动生成歌词</p>
+                            </div>
+                            <div class="lyrics-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">手动输入</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">自己编写或粘贴歌词内容</p>
+                            </div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '歌词设置',
+                        content: lyricsOptions,
+                        width: '500px',
+                        buttons: [
+                            {
+                                text: '关闭',
+                                type: 'secondary'
+                            }
+                        ]
+                    });
+
+                    // 为歌词选项添加点击事件
+                    const options = modal.querySelectorAll('.lyrics-option');
+                    options.forEach((option, index) => {
+                        option.addEventListener('click', () => {
+                            if (index === 0) {
+                                // 自动生成
+                                CommonComponents.ToastManager.show('AI 正在生成歌词...', 'info');
+                                CommonComponents.ModalManager.close(modal);
+                            } else {
+                                // 手动输入
+                                CommonComponents.ModalManager.close(modal);
+                                setTimeout(() => {
+                                    const lyricsInput = `
+                                        <div>
+                                            <textarea id="lyrics-text" placeholder="请输入歌词内容..." style="width: 100%; height: 200px; background-color: #333; border: none; border-radius: 4px; color: #fff; padding: 10px; resize: vertical;"></textarea>
+                                        </div>
+                                    `;
+
+                                    CommonComponents.ModalManager.create({
+                                        title: '输入歌词',
+                                        content: lyricsInput,
+                                        width: '600px',
+                                        buttons: [
+                                            {
+                                                text: '取消',
+                                                type: 'secondary'
+                                            },
+                                            {
+                                                text: '保存',
+                                                type: 'primary',
+                                                onClick: () => {
+                                                    const lyrics = document.getElementById('lyrics-text').value.trim();
+                                                    if (lyrics) {
+                                                        CommonComponents.ToastManager.show('歌词已保存', 'success');
+                                                    } else {
+                                                        CommonComponents.ToastManager.show('请输入歌词内容', 'warning');
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    });
+                                }, 100);
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Style 按钮功能 - 居中选择弹窗
+            const styleBtn = document.getElementById('style-btn');
+            if (styleBtn) {
+                styleBtn.addEventListener('click', function() {
+                    const styleOptions = `
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div class="style-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">赛博朋克</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">未来科技感视觉效果</p>
+                            </div>
+                            <div class="style-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">复古</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">怀旧经典的视觉风格</p>
+                            </div>
+                            <div class="style-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">未来主义</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">前卫现代的设计元素</p>
+                            </div>
+                            <div class="style-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">自然风光</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">清新自然的场景背景</p>
+                            </div>
+                            <div class="style-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
+                                <h4 style="margin: 0 0 5px 0;">城市夜景</h4>
+                                <p style="margin: 0; color: #aaa; font-size: 12px;">繁华都市的夜晚氛围</p>
+                            </div>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '选择视觉风格',
+                        content: styleOptions,
+                        width: '500px',
+                        buttons: [
+                            {
+                                text: '关闭',
+                                type: 'secondary'
+                            }
+                        ]
+                    });
+
+                    // 为风格选项添加点击事件
+                    const options = modal.querySelectorAll('.style-option');
+                    options.forEach((option, index) => {
+                        option.addEventListener('click', () => {
+                            const styles = ['赛博朋克', '复古', '未来主义', '自然风光', '城市夜景'];
+                            CommonComponents.ToastManager.show(`已选择 ${styles[index]} 风格`, 'success');
+                            CommonComponents.ModalManager.close(modal);
+                        });
+                    });
+                });
+            }
+
+            // 水印开关功能
+            const watermarkToggle = document.getElementById('watermark-toggle');
+            let watermarkRemoved = false;
+            if (watermarkToggle) {
+                watermarkToggle.addEventListener('click', function() {
+                    // 检查用户权限（模拟）
+                    const hasPermission = Math.random() > 0.5; // 随机模拟权限
+                    
+                    if (!hasPermission) {
+                        CommonComponents.ModalManager.create({
+                            title: '付费功能',
+                            content: '<p style="margin: 0; line-height: 1.5;">移除水印为付费功能，是否前往开通？</p>',
+                            width: '400px',
+                            buttons: [
+                                {
+                                    text: '取消',
+                                    type: 'secondary'
+                                },
+                                {
+                                    text: '前往开通',
+                                    type: 'primary',
+                                    onClick: () => {
+                                        CommonComponents.ToastManager.show('正在跳转到付费页面...', 'info');
+                                    }
+                                }
+                            ]
+                        });
                         return;
                     }
                     
-                    alert('开始创作：' + inputText);
-                    console.log('创作内容:', inputText);
-                    console.log('选中风格:', localStorage.getItem('selectedStyle'));
-                    console.log('选中音乐:', localStorage.getItem('selectedMusic'));
+                    watermarkRemoved = !watermarkRemoved;
+                    if (watermarkRemoved) {
+                        this.style.backgroundColor = '#007bff';
+                        this.style.justifyContent = 'flex-start';
+                        CommonComponents.ToastManager.show('水印开关已开启', 'success');
+                    } else {
+                        this.style.backgroundColor = '#555';
+                        this.style.justifyContent = 'flex-end';
+                        CommonComponents.ToastManager.show('水印开关已关闭', 'info');
+                    }
+                });
+            }
+
+            // 编辑按钮功能
+            const editBtn = document.getElementById('edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    CommonComponents.ToastManager.show('正在打开高级编辑器...', 'info');
+                });
+            }
+
+            // 模式切换功能 - 无弹窗，仅状态高亮
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const mode = this.getAttribute('data-mode');
+                    const modeNames = {
+                        'fast': 'Fast',
+                        'expert': 'Expert', 
+                        'auto': 'Auto'
+                    };
+                    CommonComponents.ToastManager.show(`已切换至 ${modeNames[mode]} 模式`, 'success');
+                });
+            });
+
+            // 隐私设置功能 - 居中确认弹窗
+            const privacySelect = document.getElementById('privacy-select');
+            if (privacySelect) {
+                privacySelect.addEventListener('change', function() {
+                    const privacyText = this.options[this.selectedIndex].text;
+                    const descriptions = {
+                        'Public': '所有人都可以查看您的作品',
+                        'Private': '只有您可以查看作品',
+                        'Unlisted': '只有拥有链接的人可以查看'
+                    };
+                    
+                    CommonComponents.ModalManager.create({
+                        title: '确认隐私设置',
+                        content: `<p style="margin: 0; line-height: 1.5;">是否将作品设置为 <strong>${privacyText}</strong> 状态？<br><br>${descriptions[privacyText]}</p>`,
+                        width: '400px',
+                        buttons: [
+                            {
+                                text: '取消',
+                                type: 'secondary',
+                                onClick: () => {
+                                    // 恢复之前的选择
+                                    privacySelect.selectedIndex = 0;
+                                }
+                            },
+                            {
+                                text: '确认设置',
+                                type: 'primary',
+                                onClick: () => {
+                                    CommonComponents.ToastManager.show(`隐私设置已更改为 ${privacyText}`, 'success');
+                                }
+                            }
+                        ]
+                    });
+                });
+            }
+
+            // 创作按钮功能 - 居中创作进度弹窗
+            const createBtn = document.querySelector('.create-btn');
+            if (createBtn) {
+                createBtn.addEventListener('click', function() {
+                    const inputText = document.querySelector('.input-area input').value.trim();
+                    const selectedMode = document.querySelector('.mode-btn.active').getAttribute('data-mode');
+                    const privacy = document.getElementById('privacy-select').value;
+                    
+                    // 参数校验
+                    const missingParams = [];
+                    if (!inputText) missingParams.push('创作描述');
+                    if (!localStorage.getItem('selectedMusic')) missingParams.push('音乐选择');
+                    if (!localStorage.getItem('selectedStyle')) missingParams.push('风格设置');
+                    
+                    if (missingParams.length > 0) {
+                        CommonComponents.ModalManager.create({
+                            title: '参数不完整',
+                            content: `<p style="margin: 0; line-height: 1.5;">以下参数缺失，请补充：<br><br>${missingParams.map(p => `• ${p}`).join('<br>')}</p>`,
+                            width: '400px',
+                            buttons: [
+                                {
+                                    text: '去补充',
+                                    type: 'primary'
+                                },
+                                {
+                                    text: '取消',
+                                    type: 'secondary'
+                                }
+                            ]
+                        });
+                        return;
+                    }
+                    
+                    // 创建创作进度弹窗
+                    const progressContent = `
+                        <div style="text-align: center;">
+                            <div id="creation-status" style="margin-bottom: 20px;">
+                                <h4 style="margin: 0 0 10px 0;">正在创作中...</h4>
+                                <p id="status-text" style="margin: 0; color: #aaa;">初始化创作参数...</p>
+                            </div>
+                            <div class="progress-bar" style="margin: 20px 0;">
+                                <div class="progress-fill" id="creation-progress"></div>
+                            </div>
+                            <p id="progress-percent" style="margin: 0;">0%</p>
+                        </div>
+                    `;
+
+                    const modal = CommonComponents.ModalManager.create({
+                        title: '创作进度',
+                        content: progressContent,
+                        width: '700px',
+                        buttons: [
+                            {
+                                text: '取消创作',
+                                type: 'secondary',
+                                onClick: () => {
+                                    CommonComponents.ToastManager.show('创作已取消', 'warning');
+                                }
+                            }
+                        ],
+                        closable: false
+                    });
+
+                    // 模拟创作进度
+                    const progressFill = modal.querySelector('#creation-progress');
+                    const progressPercent = modal.querySelector('#progress-percent');
+                    const statusText = modal.querySelector('#status-text');
+                    
+                    const stages = [
+                        '音频分析中...',
+                        '生成视觉效果...',
+                        '参数优化中...',
+                        '渲染视频中...',
+                        '后期处理中...'
+                    ];
+                    
+                    let progress = 0;
+                    let stageIndex = 0;
+                    
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 8 + 2;
+                        
+                        if (progress >= 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                            
+                            // 创作完成
+                            setTimeout(() => {
+                                modal.querySelector('.modal-content').innerHTML = `
+                                    <div style="text-align: center;">
+                                        <div style="margin-bottom: 20px;">
+                                            <div style="width: 60px; height: 60px; background-color: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                                                <span style="font-size: 24px; color: white;">✓</span>
+                                            </div>
+                                            <h3 style="margin: 0 0 10px 0; color: #28a745;">创作成功！</h3>
+                                            <p style="margin: 0; color: #aaa;">您的音乐视频已生成完成</p>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                // 更新按钮
+                                const actions = modal.querySelector('.modal-actions');
+                                actions.innerHTML = `
+                                    <button class="modal-btn secondary">返回编辑</button>
+                                    <button class="modal-btn primary" id="view-work">查看作品</button>
+                                    <button class="modal-btn secondary">关闭</button>
+                                `;
+                                
+                                // 按钮事件
+                                modal.querySelector('#view-work').addEventListener('click', () => {
+                                    CommonComponents.ToastManager.show('正在打开作品预览...', 'success');
+                                    CommonComponents.ModalManager.close(modal);
+                                });
+                                
+                                modal.querySelectorAll('.modal-btn.secondary').forEach(btn => {
+                                    btn.addEventListener('click', () => {
+                                        CommonComponents.ModalManager.close(modal);
+                                    });
+                                });
+                            }, 1000);
+                        } else {
+                            // 更新进度和状态
+                            if (progress > (stageIndex + 1) * 20 && stageIndex < stages.length - 1) {
+                                stageIndex++;
+                            }
+                            
+                            progressFill.style.width = progress + '%';
+                            progressPercent.textContent = Math.round(progress) + '%';
+                            statusText.textContent = stages[stageIndex];
+                        }
+                    }, 300);
+                });
+            }
+
+            // 输入框智能提示功能 - 页面内静态文本
+            const inputArea = document.querySelector('.input-area input');
+            if (inputArea) {
+                const suggestions = [
+                    '尝试输入"温暖的民谣风格歌词"',
+                    '描述您想要的视频氛围',
+                    '让AI为这首歌创作视频',
+                    '输入"赛博朋克风格的音乐视频"',
+                    '描述角色和场景设定'
+                ];
+                
+                inputArea.addEventListener('focus', function() {
+                    if (this.value === '') {
+                        const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+                        
+                        // 在输入框下方显示提示
+                        let tipEl = document.querySelector('.input-tip');
+                        if (!tipEl) {
+                            tipEl = document.createElement('div');
+                            tipEl.className = 'input-tip';
+                            tipEl.style.cssText = 'font-size: 12px; color: #666; margin-top: 5px; font-style: italic;';
+                            this.parentNode.appendChild(tipEl);
+                        }
+                        tipEl.textContent = randomSuggestion;
+                    }
+                });
+                
+                inputArea.addEventListener('blur', function() {
+                    const tipEl = document.querySelector('.input-tip');
+                    if (tipEl) {
+                        tipEl.remove();
+                    }
+                });
+                
+                inputArea.addEventListener('input', function() {
+                    // 标记有未保存的修改
+                    localStorage.setItem('hasUnsavedChanges', 'true');
                 });
             }
         }
@@ -276,6 +733,66 @@
             if (selectedMusic && musicTag) {
                 const music = JSON.parse(selectedMusic);
                 musicTag.innerHTML = `${music.title} - ${music.artist} <span class="close">×</span>`;
+            }
+
+            // 首次保存提示
+            if (selectedStyle || selectedMusic) {
+                const hasShownSaveNotice = localStorage.getItem('hasShownSaveNotice');
+                if (!hasShownSaveNotice) {
+                    setTimeout(() => {
+                        CommonComponents.ToastManager.show('已保存您的选择', 'success');
+                        localStorage.setItem('hasShownSaveNotice', 'true');
+                    }, 1000);
+                }
+            }
+        }
+
+        // 自动保存功能
+        function initAutoSave() {
+            // 监听所有可能的用户选择变化
+            const inputArea = document.querySelector('.input-area input');
+            if (inputArea) {
+                inputArea.addEventListener('input', function() {
+                    localStorage.setItem('creationDescription', this.value);
+                });
+                
+                // 恢复之前的输入
+                const savedDescription = localStorage.getItem('creationDescription');
+                if (savedDescription) {
+                    inputArea.value = savedDescription;
+                }
+            }
+
+            // 监听模式选择变化
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    localStorage.setItem('selectedMode', this.getAttribute('data-mode'));
+                });
+            });
+
+            // 恢复之前的模式选择
+            const savedMode = localStorage.getItem('selectedMode');
+            if (savedMode) {
+                const modeBtn = document.querySelector(`[data-mode="${savedMode}"]`);
+                if (modeBtn) {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    modeBtn.classList.add('active');
+                }
+            }
+
+            // 监听隐私设置变化
+            const privacySelect = document.getElementById('privacy-select');
+            if (privacySelect) {
+                privacySelect.addEventListener('change', function() {
+                    localStorage.setItem('selectedPrivacy', this.value);
+                });
+                
+                // 恢复之前的隐私设置
+                const savedPrivacy = localStorage.getItem('selectedPrivacy');
+                if (savedPrivacy) {
+                    privacySelect.value = savedPrivacy;
+                }
             }
         }
     </script>
