@@ -124,7 +124,7 @@
 
                 // 初始化公共交互功能
                 CommonComponents.initCommonInteractions();
-                
+
                 // 初始化风格选择功能
                 initStyleSelector();
             }, 100); // 等待导航栏初始化
@@ -136,17 +136,17 @@
             styleCards.forEach(card => {
                 card.addEventListener('click', function () {
                     const styleName = this.getAttribute('data-style');
-                    
+
                     // 移除其他卡片的选中状态
                     styleCards.forEach(c => {
                         c.style.border = 'none';
                         c.style.backgroundColor = '#2C2C2C';
                     });
-                    
+
                     // 高亮当前卡片
                     this.style.border = '2px solid #007bff';
                     this.style.backgroundColor = '#333';
-                    
+
                     // 弹出确认选择弹窗
                     CommonComponents.ModalManager.create({
                         title: '确认选择',

@@ -553,7 +553,6 @@ const CommonComponents = {
                 <div class="tutorial-card" style="background-image: url('public/img/palceholder (9).png');"></div>
                 <div class="tutorial-card" style="background-image: url('public/img/palceholder (10).png');"></div>
                 <div class="tutorial-card" style="background-image: url('public/img/palceholder (2).png');"></div>
-
             </div>
         </div>
     `,
@@ -644,7 +643,7 @@ const CommonComponents = {
                 buttons = [],
                 closable = true,
                 onClose = null,
-                customClass = '' // 新增自定义CSS类参数
+                customClass = ''
             } = options;
 
             // 创建遮罩层
@@ -653,7 +652,7 @@ const CommonComponents = {
 
             // 创建弹窗
             const modal = document.createElement('div');
-            modal.className = `modal ${customClass}`.trim(); // 添加自定义类
+            modal.className = `modal ${customClass}`.trim();
             modal.style.width = width;
             if (height !== 'auto') {
                 modal.style.height = height;
@@ -852,87 +851,27 @@ const CommonComponents = {
 
     // 侧边栏按钮功能
     initSidebarButtons: () => {
-        // Create 按钮 - 直接跳转，如有未保存修改则确认
+        // Create 按钮
         const createBtn = document.querySelector('.sidebar-btn.primary');
         if (createBtn) {
             createBtn.addEventListener('click', () => {
-                // 检查是否有未保存的修改
-                const hasUnsavedChanges = localStorage.getItem('hasUnsavedChanges') === 'true';
-                if (hasUnsavedChanges) {
-                    CommonComponents.ModalManager.confirm(
-                        '是否放弃当前修改并跳转？',
-                        () => {
-                            localStorage.removeItem('hasUnsavedChanges');
-                            window.location.href = 'create.html';
-                        }
-                    );
-                } else {
-                    window.location.href = 'create.html';
-                }
+                window.location.href = 'create.html';
             });
         }
 
-        // Edit 按钮 - 直接跳转，如有未保存修改则确认
+        // Edit 按钮
         const editBtn = document.querySelector('.sidebar-btn:not(.primary)');
         if (editBtn) {
             editBtn.addEventListener('click', () => {
-                const hasUnsavedChanges = localStorage.getItem('hasUnsavedChanges') === 'true';
-                if (hasUnsavedChanges) {
-                    CommonComponents.ModalManager.confirm(
-                        '是否放弃当前修改并跳转到编辑页面？',
-                        () => {
-                            localStorage.removeItem('hasUnsavedChanges');
-                            CommonComponents.ToastManager.show('编辑功能即将推出！', 'info');
-                        }
-                    );
-                } else {
-                    CommonComponents.ToastManager.show('编辑功能即将推出！', 'info');
-                }
+                CommonComponents.ToastManager.show('编辑功能即将推出！', 'info');
             });
         }
 
-        // Agent 按钮 - 居中功能选择弹窗
+        // Agent 按钮 - 简单提示
         const agentBtn = document.querySelector('.toggle-btn');
         if (agentBtn && agentBtn.textContent.includes('Agent')) {
             agentBtn.addEventListener('click', () => {
-                const agentOptions = `
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        <div class="agent-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                            <h4 style="margin: 0 0 5px 0;">智能推荐</h4>
-                            <p style="margin: 0; color: #aaa; font-size: 12px;">AI 分析您的创作偏好，推荐最适合的音乐和风格</p>
-                        </div>
-                        <div class="agent-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                            <h4 style="margin: 0 0 5px 0;">参数优化</h4>
-                            <p style="margin: 0; color: #aaa; font-size: 12px;">自动调整创作参数，提升视频质量和观看体验</p>
-                        </div>
-                        <div class="agent-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                            <h4 style="margin: 0 0 5px 0;">创意灵感</h4>
-                            <p style="margin: 0; color: #aaa; font-size: 12px;">基于热门趋势生成创作灵感和文案建议</p>
-                        </div>
-                    </div>
-                `;
-
-                const modal = CommonComponents.ModalManager.create({
-                    title: 'AI Agent 功能',
-                    content: agentOptions,
-                    width: '600px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
-
-                // 为选项添加点击事件
-                const options = modal.querySelectorAll('.agent-option');
-                options.forEach((option, index) => {
-                    option.addEventListener('click', () => {
-                        const features = ['智能推荐', '参数优化', '创意灵感'];
-                        CommonComponents.ToastManager.show(`已启用 ${features[index]} 功能`, 'success');
-                        CommonComponents.ModalManager.close(modal);
-                    });
-                });
+                CommonComponents.ToastManager.show('Agent 功能即将推出！', 'info');
             });
         }
 
@@ -1046,7 +985,7 @@ const CommonComponents = {
                         title: 'ToolBox - 工具箱',
                         content: toolboxOptions,
                         width: '800px',
-                        customClass: 'toolbox-modal', // 添加自定义类
+                        customClass: 'toolbox-modal',
                         buttons: [
                             {
                                 text: '关闭',
@@ -1061,7 +1000,7 @@ const CommonComponents = {
                         item.addEventListener('click', () => {
                             const toolName = item.textContent;
                             const toolId = item.getAttribute('data-tool');
-
+                            
                             // 根据工具类型显示不同的提示
                             if (item.classList.contains('hot')) {
                                 CommonComponents.ToastManager.show(`正在启动热门工具：${toolName}`, 'success');
@@ -1072,7 +1011,7 @@ const CommonComponents = {
                             } else {
                                 CommonComponents.ToastManager.show(`正在启动工具：${toolName}`, 'info');
                             }
-
+                            
                             // 这里可以添加具体的工具跳转逻辑
                             setTimeout(() => {
                                 CommonComponents.ModalManager.close(modal);
@@ -1082,353 +1021,23 @@ const CommonComponents = {
                 });
             }
         });
-
-        // New task 按钮
-        const newTaskBtn = document.querySelector('.new-task');
-        if (newTaskBtn) {
-            newTaskBtn.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-        }
-
-        // 历史记录项目 - 页面内展开，无历史记录时弹窗提示
-        const historyItems = document.querySelectorAll('.history-item');
-        if (historyItems.length === 0) {
-            // 如果没有历史记录，添加点击事件到历史标题
-            const historyTitle = document.querySelector('.sidebar-section h4');
-            if (historyTitle && historyTitle.textContent.includes('HISTORY')) {
-                historyTitle.style.cursor = 'pointer';
-                historyTitle.addEventListener('click', () => {
-                    CommonComponents.ModalManager.alert('暂无历史创作记录');
-                });
-            }
-        } else {
-            historyItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    CommonComponents.ToastManager.show(`正在加载历史项目：${item.textContent}`, 'info');
-                });
-            });
-        }
-
-        // 底部链接功能
-        const referLink = document.querySelector('a[href="#"]:nth-of-type(1)');
-        if (referLink && referLink.textContent.includes('Refer')) {
-            referLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const referContent = `
-                    <div style="text-align: center;">
-                        <p style="margin-bottom: 15px;">分享您的推荐链接，邀请好友注册即可获得奖励！</p>
-                        <div style="background-color: #333; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-family: monospace;">
-                            https://freebeat.com/ref/user123456
-                        </div>
-                        <button id="copy-ref-link" style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">复制链接</button>
-                    </div>
-                `;
-
-                const modal = CommonComponents.ModalManager.create({
-                    title: '推荐好友',
-                    content: referContent,
-                    width: '500px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
-
-                // 复制链接功能
-                const copyBtn = modal.querySelector('#copy-ref-link');
-                copyBtn.addEventListener('click', () => {
-                    navigator.clipboard.writeText('https://freebeat.com/ref/user123456').then(() => {
-                        CommonComponents.ToastManager.show('链接已复制到剪贴板', 'success');
-                    });
-                });
-            });
-        }
-
-        const subscribeLink = document.querySelector('a[href="#"]:nth-of-type(2)');
-        if (subscribeLink && subscribeLink.textContent.includes('Subscribe')) {
-            subscribeLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const subscribeContent = `
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        <div style="text-align: center; margin-bottom: 10px;">
-                            <p>选择您喜欢的订阅方式：</p>
-                        </div>
-                        <div class="subscribe-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                            <h4 style="margin: 0 0 5px 0;">邮箱订阅</h4>
-                            <p style="margin: 0; color: #aaa; font-size: 12px;">接收最新功能更新和创作技巧</p>
-                        </div>
-                        <div class="subscribe-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; text-align: center;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                            <h4 style="margin: 0 0 5px 0;">微信公众号</h4>
-                            <p style="margin: 0; color: #aaa; font-size: 12px;">关注公众号获取独家内容</p>
-                        </div>
-                    </div>
-                `;
-
-                const modal = CommonComponents.ModalManager.create({
-                    title: '订阅服务',
-                    content: subscribeContent,
-                    width: '500px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
-
-                // 为订阅选项添加点击事件
-                const options = modal.querySelectorAll('.subscribe-option');
-                options.forEach((option, index) => {
-                    option.addEventListener('click', () => {
-                        const methods = ['邮箱订阅', '微信公众号'];
-                        CommonComponents.ToastManager.show(`正在前往 ${methods[index]}`, 'info');
-                        CommonComponents.ModalManager.close(modal);
-                    });
-                });
-            });
-        }
-
-        const faqLink = document.querySelector('a[href="#"]:nth-of-type(3)');
-        if (faqLink && faqLink.textContent.includes('FAQ')) {
-            faqLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const faqContent = `
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        <div style="margin-bottom: 15px;">
-                            <input type="text" placeholder="搜索问题..." style="width: 100%; padding: 8px; background-color: #333; border: none; border-radius: 4px; color: #fff;">
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div class="faq-item" style="padding: 10px; background-color: #333; border-radius: 4px;">
-                                <h4 style="margin: 0 0 5px 0;">如何创建音乐视频？</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">选择风格 → 选择音乐 → 输入描述 → 点击创建</p>
-                            </div>
-                            <div class="faq-item" style="padding: 10px; background-color: #333; border-radius: 4px;">
-                                <h4 style="margin: 0 0 5px 0;">支持哪些音频格式？</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">支持 MP3、WAV、FLAC、AAC 等常见格式</p>
-                            </div>
-                            <div class="faq-item" style="padding: 10px; background-color: #333; border-radius: 4px;">
-                                <h4 style="margin: 0 0 5px 0;">如何移除水印？</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">升级到付费版本即可移除所有水印</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                CommonComponents.ModalManager.create({
-                    title: '常见问题',
-                    content: faqContent,
-                    width: '800px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
-            });
-        }
-
-        // 语言选择 - 直接切换，无弹窗
-        const languageSelect = document.querySelector('.language select');
-        if (languageSelect) {
-            languageSelect.addEventListener('change', (e) => {
-                const language = e.target.value === 'zh' ? '中文' : 'English';
-                CommonComponents.ToastManager.show(`语言已切换为 ${language}`, 'success');
-                // 这里可以添加实际的语言切换逻辑
-            });
-        }
     },
 
     // 顶部导航功能
     initTopNavButtons: () => {
-        // 下拉菜单 - 改为页面内展开式选择
-        const dropdown = document.querySelector('.dropdown');
-        if (dropdown) {
-            dropdown.style.position = 'relative';
-
-            dropdown.addEventListener('click', () => {
-                // 检查是否已存在下拉菜单
-                let existingMenu = dropdown.querySelector('.dropdown-menu');
-                if (existingMenu) {
-                    existingMenu.classList.toggle('active');
-                    return;
-                }
-
-                // 创建下拉菜单
-                const menu = document.createElement('div');
-                menu.className = 'dropdown-menu';
-                menu.innerHTML = `
-                    <div class="dropdown-item">Music Video</div>
-                    <div class="dropdown-item">Short Video</div>
-                    <div class="dropdown-item">Podcast Video</div>
-                    <div class="dropdown-item">Live Stream</div>
-                `;
-
-                dropdown.appendChild(menu);
-
-                // 为菜单项添加点击事件
-                const items = menu.querySelectorAll('.dropdown-item');
-                items.forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const selectedType = item.textContent;
-                        dropdown.querySelector('span').textContent = selectedType;
-                        menu.classList.remove('active');
-                        CommonComponents.ToastManager.show(`已切换到 ${selectedType} 模式`, 'success');
-                    });
-                });
-
-                setTimeout(() => {
-                    menu.classList.add('active');
-                }, 10);
-
-                // 点击外部关闭菜单
-                document.addEventListener('click', function closeMenu(e) {
-                    if (!dropdown.contains(e.target)) {
-                        menu.classList.remove('active');
-                        document.removeEventListener('click', closeMenu);
-                    }
-                });
-            });
-        }
-
-        // 金币显示 - 点击弹出金币明细弹窗
-        const coinDisplay = document.querySelector('.coin');
-        if (coinDisplay) {
-            coinDisplay.style.cursor = 'pointer';
-            coinDisplay.addEventListener('click', () => {
-                const coinContent = `
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        <div style="display: flex; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 10px;">
-                            <button class="coin-tab active" data-tab="income" style="background: none; border: none; color: #007bff; padding: 5px 10px; cursor: pointer;">收入</button>
-                            <button class="coin-tab" data-tab="expense" style="background: none; border: none; color: #aaa; padding: 5px 10px; cursor: pointer;">支出</button>
-                            <button class="coin-tab" data-tab="tasks" style="background: none; border: none; color: #aaa; padding: 5px 10px; cursor: pointer;">任务获取</button>
-                        </div>
-                        <div id="coin-content">
-                            <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                <span>每日签到</span>
-                                <span style="color: #28a745;">+50</span>
-                            </div>
-                            <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                <span>推荐好友</span>
-                                <span style="color: #28a745;">+200</span>
-                            </div>
-                            <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                <span>完成创作</span>
-                                <span style="color: #28a745;">+100</span>
-                            </div>
-                        </div>
-                        <div style="text-align: center; padding-top: 10px; border-top: 1px solid #333;">
-                            <strong>当前余额: 1000 金币</strong>
-                        </div>
-                    </div>
-                `;
-
-                const modal = CommonComponents.ModalManager.create({
-                    title: '金币明细',
-                    content: coinContent,
-                    width: '500px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
-
-                // 标签页切换功能
-                const tabs = modal.querySelectorAll('.coin-tab');
-                const content = modal.querySelector('#coin-content');
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        tabs.forEach(t => {
-                            t.classList.remove('active');
-                            t.style.color = '#aaa';
-                        });
-                        tab.classList.add('active');
-                        tab.style.color = '#007bff';
-
-                        const tabType = tab.getAttribute('data-tab');
-                        let newContent = '';
-
-                        switch (tabType) {
-                            case 'income':
-                                newContent = `
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>每日签到</span>
-                                        <span style="color: #28a745;">+50</span>
-                                    </div>
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>推荐好友</span>
-                                        <span style="color: #28a745;">+200</span>
-                                    </div>
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>完成创作</span>
-                                        <span style="color: #28a745;">+100</span>
-                                    </div>
-                                `;
-                                break;
-                            case 'expense':
-                                newContent = `
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>创建视频</span>
-                                        <span style="color: #dc3545;">-30</span>
-                                    </div>
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>移除水印</span>
-                                        <span style="color: #dc3545;">-50</span>
-                                    </div>
-                                `;
-                                break;
-                            case 'tasks':
-                                newContent = `
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>每日签到 (0/1)</span>
-                                        <button style="background-color: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">签到</button>
-                                    </div>
-                                    <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
-                                        <span>分享作品 (0/3)</span>
-                                        <button style="background-color: #333; color: white; border: none; padding: 4px 8px; border-radius: 4px;">未完成</button>
-                                    </div>
-                                `;
-                                break;
-                        }
-                        content.innerHTML = newContent;
-                    });
-                });
-            });
-        }
-
-        // Discord 按钮 - 直接跳转，网络异常时提示
+        // Discord 按钮
         const discordBtn = document.querySelector('.join-btn');
         if (discordBtn) {
             discordBtn.addEventListener('click', () => {
-                try {
-                    window.open('https://discord.gg/freebeat', '_blank');
-                } catch (error) {
-                    CommonComponents.ModalManager.create({
-                        title: '跳转失败',
-                        content: '<p style="margin: 0;">跳转失败，请检查网络连接</p>',
-                        width: '400px',
-                        buttons: [
-                            {
-                                text: '重试',
-                                type: 'primary',
-                                onClick: () => {
-                                    window.open('https://discord.gg/freebeat', '_blank');
-                                }
-                            },
-                            {
-                                text: '关闭',
-                                type: 'secondary'
-                            }
-                        ]
-                    });
-                }
+                CommonComponents.ToastManager.show('正在跳转到 Discord...', 'info');
+            });
+        }
+
+        // 金币显示
+        const coinDisplay = document.querySelector('.coin');
+        if (coinDisplay) {
+            coinDisplay.addEventListener('click', () => {
+                CommonComponents.ToastManager.show('金币功能即将推出！', 'info');
             });
         }
     },
@@ -1439,78 +1048,18 @@ const CommonComponents = {
         tutorialCards.forEach((card, index) => {
             card.style.cursor = 'pointer';
             card.addEventListener('click', () => {
-                const tutorialContent = `
-                    <div style="text-align: center;">
-                        <div style="width: 100%; height: 300px; background-color: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <div style="width: 60px; height: 60px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" id="play-btn">
-                                    <span style="font-size: 24px;">▶</span>
-                                </div>
-                                <p style="margin: 0; color: #aaa;">点击播放教程 ${index + 1}</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 10px; justify-content: center;">
-                            <button id="pause-btn" style="background-color: #333; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">暂停</button>
-                            <button id="continue-btn" style="background-color: #333; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">继续</button>
-                        </div>
-                    </div>
-                `;
-
-                const modal = CommonComponents.ModalManager.create({
-                    title: `教程 ${index + 1}：学习如何使用 Freebeat 创作音乐视频`,
-                    content: tutorialContent,
-                    width: '800px',
-                    height: '500px',
-                    buttons: [
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ],
-                    onClose: () => {
-                        // 保存教程进度到 localStorage
-                        localStorage.setItem(`tutorial_${index}_progress`, 'watched');
-                    }
-                });
-
-                // 播放控制功能
-                let isPlaying = false;
-                const playBtn = modal.querySelector('#play-btn');
-                const pauseBtn = modal.querySelector('#pause-btn');
-                const continueBtn = modal.querySelector('#continue-btn');
-
-                playBtn.addEventListener('click', () => {
-                    isPlaying = true;
-                    playBtn.innerHTML = '<span style="font-size: 24px;">⏸</span>';
-                    CommonComponents.ToastManager.show('教程播放中...', 'info');
-                });
-
-                pauseBtn.addEventListener('click', () => {
-                    isPlaying = false;
-                    playBtn.innerHTML = '<span style="font-size: 24px;">▶</span>';
-                    CommonComponents.ToastManager.show('教程已暂停', 'info');
-                });
-
-                continueBtn.addEventListener('click', () => {
-                    if (!isPlaying) {
-                        isPlaying = true;
-                        playBtn.innerHTML = '<span style="font-size: 24px;">⏸</span>';
-                        CommonComponents.ToastManager.show('教程继续播放', 'info');
-                    }
-                });
+                CommonComponents.ToastManager.show(`正在播放教程 ${index + 1}...`, 'info');
             });
         });
     },
 
     // 排行榜交互功能
     initChartsInteractions: () => {
-        // 排行榜标签切换 - 页面内无刷新切换
+        // 排行榜标签切换
         const chartsTabs = document.querySelectorAll('.charts-tab');
         chartsTabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                // 移除所有活跃状态
                 chartsTabs.forEach(t => t.classList.remove('active'));
-                // 添加当前活跃状态
                 tab.classList.add('active');
                 CommonComponents.ToastManager.show(`已切换到 ${tab.textContent}`, 'info');
             });
@@ -1524,71 +1073,13 @@ const CommonComponents = {
             });
         }
 
-        // 排行榜卡片点击 - 居中详情弹窗
+        // 排行榜卡片点击
         const chartCards = document.querySelectorAll('.chart-card');
         chartCards.forEach(card => {
             card.style.cursor = 'pointer';
             card.addEventListener('click', () => {
                 const title = card.querySelector('.title').textContent;
-                const artist = card.querySelector('.artist').textContent;
-                const remixCount = card.querySelector('.remix').textContent;
-
-                const musicDetailContent = `
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div style="display: flex; gap: 20px;">
-                            <div style="width: 120px; height: 120px; background-color: #555; border-radius: 4px; flex-shrink: 0;"></div>
-                            <div style="flex: 1;">
-                                <h3 style="margin: 0 0 10px 0;">${title}</h3>
-                                <p style="margin: 0 0 5px 0; color: #aaa;">艺术家: ${artist}</p>
-                                <p style="margin: 0 0 5px 0; color: #aaa;">时长: 3:45</p>
-                                <p style="margin: 0 0 10px 0; color: #0f0; font-size: 12px;">${remixCount}</p>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <button style="background-color: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">▶ 试听</button>
-                                    <span style="color: #aaa; font-size: 12px;">点击试听音乐</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                CommonComponents.ModalManager.create({
-                    title: '音乐详情',
-                    content: musicDetailContent,
-                    width: '700px',
-                    buttons: [
-                        {
-                            text: '加入收藏',
-                            type: 'secondary',
-                            onClick: () => {
-                                CommonComponents.ToastManager.show('已加入收藏', 'success');
-                                return false; // 不关闭弹窗
-                            }
-                        },
-                        {
-                            text: '选择使用',
-                            type: 'primary',
-                            onClick: () => {
-                                // 保存选中的音乐
-                                const selectedMusic = {
-                                    title: title,
-                                    artist: artist,
-                                    duration: '3:45'
-                                };
-                                localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
-                                CommonComponents.ToastManager.show('已选择该音乐', 'success');
-
-                                // 跳转到创作页面
-                                setTimeout(() => {
-                                    window.location.href = 'create.html';
-                                }, 1000);
-                            }
-                        },
-                        {
-                            text: '关闭',
-                            type: 'secondary'
-                        }
-                    ]
-                });
+                CommonComponents.ToastManager.show(`正在播放 ${title}...`, 'info');
             });
         });
     }
