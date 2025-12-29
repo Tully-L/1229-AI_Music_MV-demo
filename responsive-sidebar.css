@@ -25,17 +25,81 @@
     width: 260px;
 }
 
+/* 导航栏隐藏状态 - 完全隐藏但保留按钮 */
+.sidebar.hidden {
+    width: 40px; /* 只保留按钮区域的宽度 */
+}
+
+/* 隐藏状态下隐藏所有内容但保留按钮 */
+.sidebar.hidden .sidebar-content {
+    display: none; /* 完全隐藏内容 */
+}
+
+/* 确保按钮在隐藏状态下仍然可见 */
+.sidebar.hidden .sidebar-toggle-desktop {
+    display: flex !important; /* 强制显示按钮 */
+}
+
+/* 导航栏显示/隐藏切换按钮 - 精准定位在logo右侧贴边沿 */
+.sidebar-toggle-desktop {
+    position: absolute;
+    top: 23px; /* 与logo垂直居中对齐 */
+    right: 10px; /* 贴右侧边沿 */
+    width: 20px;
+    height: 20px;
+    background-color: #555;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+    z-index: 10000;
+    transition: all 0.3s ease;
+    display: flex !important; /* 强制显示 */
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.sidebar-toggle-desktop:hover {
+    background-color: #666;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 隐藏状态下的切换按钮 - 调整位置和样式 */
+.sidebar.hidden .sidebar-toggle-desktop {
+    position: absolute;
+    top: 15px;
+    left: 8px; /* 调整到左侧 */
+    right: auto;
+    width: 24px;
+    height: 24px;
+    background-color: #007bff;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 10001;
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    display: flex !important; /* 强制显示 */
+}
+
+.sidebar.hidden .sidebar-toggle-desktop:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
 /* 导航栏内容区域 */
 .sidebar-content {
-    padding: 20px 15px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     min-height: 100vh;
     position: relative;
 }
 
-/* 导航栏头部 */
+/* 导航栏头部 - 精确调整布局以容纳切换按钮 */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -47,6 +111,8 @@
     padding: 8px;
     border-radius: 4px;
     transition: background-color 0.3s ease;
+    position: relative;
+    margin-right: 30px; /* 精确为切换按钮留出空间 */
 }
 
 .sidebar-header:hover {
@@ -130,7 +196,7 @@
 
 .sidebar-section h4 {
     font-size: 12px;
-    color: #aaa;
+    color: #6e6e6e;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 5px;
@@ -169,6 +235,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .new-task {
@@ -208,16 +276,16 @@
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding-top: 20px;
+    gap: 8px;
+    padding-top: 15px;
     border-top: 1px solid #333;
 }
 
 .sidebar-bottom a {
-    color: #aaa;
+    color: #787474;
     font-size: 12px;
     text-decoration: none;
-    padding: 8px;
+    padding: 6px 8px;
     border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -233,7 +301,7 @@
     gap: 8px;
     font-size: 12px;
     color: #aaa;
-    padding: 8px;
+    padding: 6px 8px;
 }
 
 .language select {
@@ -251,7 +319,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logo:hover {
+    background-color: #333;
+    color: #fff;
 }
 
 /* 主内容区域适配 */
@@ -261,6 +337,11 @@
     padding: 20px;
     transition: margin-left 0.3s ease;
 }
+
+/* 移除这个CSS类，改用JavaScript动态设置 */
+/* .main-content.sidebar-hidden {
+    margin-left: 40px;
+} */
 
 /* 遮罩层 - 移动端展开时使用 */
 .sidebar-overlay {
@@ -300,6 +381,19 @@
     background: #777;
 }
 
+.history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: #1E1E1E;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 2px;
+}
+
 /* ===== 响应式断点适配 ===== */
 
 /* 平板端适配 (768px - 1199px) */
@@ -308,9 +402,18 @@
         width: 220px;
     }
     
+    .sidebar.hidden {
+        width: 40px; /* 平板端也只保留按钮区域 */
+    }
+    
     .main-content {
         margin-left: 220px;
     }
+    
+    /* 移除这个CSS类，改用JavaScript动态设置 */
+    /* .main-content.sidebar-hidden {
+        margin-left: 40px;
+    } */
     
     .sidebar-btn {
         font-size: 13px;
@@ -330,6 +433,11 @@
 
 /* 移动端适配 (<768px) */
 @media (max-width: 767px) {
+    /* 隐藏桌面端切换按钮 */
+    .sidebar-toggle-desktop {
+        display: none !important;
+    }
+    
     /* 显示汉堡菜单按钮 */
     .sidebar-toggle {
         display: flex;
@@ -358,6 +466,10 @@
     .main-content {
         margin-left: 0;
         padding: 70px 15px 20px 15px; /* 顶部留出汉堡按钮空间 */
+    }
+    
+    .main-content.sidebar-hidden {
+        margin-left: 0;
     }
     
     /* 显示遮罩层 */
@@ -396,6 +508,11 @@
     /* 展开状态样式调整 */
     .sidebar.expanded .sidebar-content {
         padding: 70px 15px 20px 15px; /* 顶部留出关闭按钮空间 */
+    }
+    
+    /* 移动端导航栏头部调整 */
+    .sidebar.expanded .sidebar-header {
+        margin-right: 0; /* 移动端不需要为切换按钮留空间 */
     }
 }
 
@@ -487,7 +604,221 @@
     }
 }
 
-/* 减少动画模式适配 */
+/* 账号卡片样式 */
+.account-card-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.account-card {
+    width: 500px;
+    max-width: 90%;
+    background-color: rgba(18, 18, 23, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: 12px;
+    color: #111827;
+}
+
+.account-info .email {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.account-info .signin-method {
+    font-size: 13px;
+    color: #a1a1aa;
+}
+
+.signout-btn {
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid #a1a1aa;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bonus-section {
+    background-color: #d1d5db;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    color: #111827;
+    gap: 10px;
+}
+
+.bonus-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.bonus-value {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.usage-section {
+    margin-bottom: 25px;
+}
+
+.usage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.usage-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.usage-reset {
+    font-size: 12px;
+    color: #a1a1aa;
+}
+
+.plan-tag {
+    padding: 4px 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #111827;
+}
+
+.usage-detail {
+    font-size: 13px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.usage-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.usage-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #9ca3af;
+    transition: width 0.3s ease;
+}
+
+.action-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upgrade-btn {
+    padding: 12px;
+    background-color: #e5e7eb;
+    color: #111827;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upgrade-btn:hover {
+    background-color: #d1d5db;
+}
+
+.support-link {
+    font-size: 13px;
+    color: #a1a1aa;
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.support-link:hover {
+    color: #fff;
+}
+
+.close-account-btn {
+    padding: 8px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-account-btn:hover {
+    background-color: #555;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .account-card {
+        width: 90%;
+        padding: 15px;
+    }
+    
+    .bonus-section {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .account-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
+/* 减少动
+画模式适配 */
 @media (prefers-reduced-motion: reduce) {
     .sidebar,
     .sidebar-btn,

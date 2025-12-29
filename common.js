@@ -483,7 +483,7 @@ const CommonComponents = {
                     </select>
                 </div>
                 <div class="logo">
-                    <i class="fas fa-paw"></i> onpiu
+                    <i class="fas fa-paw">usgshhsysygs</i> 
                 </div>
             </div>
         </div>

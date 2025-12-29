@@ -7,6 +7,7 @@ class ResponsiveSidebar {
     constructor() {
         this.isExpanded = false;
         this.isMobile = false;
+        this.isDesktopHidden = false; // 新增：桌面端隐藏状态
         this.breakpoints = {
             mobile: 768,
             tablet: 1200
@@ -61,9 +62,14 @@ class ResponsiveSidebar {
 
         // 更新侧边栏内容结构
         sidebar.innerHTML = `
+            <!-- 桌面端隐藏/显示切换按钮 -->
+            <button class="sidebar-toggle-desktop" onclick="ResponsiveSidebarInstance.toggleDesktop()">
+                <span id="toggle-icon">◀</span>
+            </button>
+            
             <div class="sidebar-content">
                 <div class="sidebar-header" onclick="ResponsiveSidebarInstance.goToHome()">
-                    <div class="logo-icon">🎵</div>
+                    <div class="logo-icon">🎼</div>
                     <span class="logo-text">freebeat</span>
                 </div>
                 
@@ -110,9 +116,9 @@ class ResponsiveSidebar {
                             <option value="zh">zh</option>
                         </select>
                     </div>
-                    <div class="logo">
-                        <span>🐾</span>
-                        <span>onpiu</span>
+                    <div class="logo" data-action="account">
+                        <span>🕹️</span>
+                        <span>usgshhsysygs</span>
                     </div>
                 </div>
             </div>
@@ -182,19 +188,36 @@ class ResponsiveSidebar {
         
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
+        const mainContent = document.querySelector('.main-content');
         
         if (this.isMobile) {
             // 移动端模式
             if (!wasMobile) {
                 // 从桌面切换到移动端
+                sidebar.classList.remove('hidden');
                 sidebar.classList.add('collapsed');
+                mainContent.classList.remove('sidebar-hidden');
                 this.isExpanded = false;
+                this.isDesktopHidden = false;
             }
         } else {
             // 桌面/平板模式
             sidebar.classList.remove('collapsed', 'expanded');
             overlay.classList.remove('active');
             this.isExpanded = false;
+            
+            // 恢复桌面端隐藏状态
+            if (this.isDesktopHidden) {
+                sidebar.classList.add('hidden');
+                mainContent.classList.add('sidebar-hidden');
+                const toggleIcon = document.getElementById('toggle-icon');
+                if (toggleIcon) toggleIcon.textContent = '▶';
+            } else {
+                sidebar.classList.remove('hidden');
+                mainContent.classList.remove('sidebar-hidden');
+                const toggleIcon = document.getElementById('toggle-icon');
+                if (toggleIcon) toggleIcon.textContent = '◀';
+            }
             
             // 更新主内容边距
             this.updateMainContentMargin();
@@ -214,6 +237,40 @@ class ResponsiveSidebar {
                 this.expand();
             }
         }
+    }
+
+    /**
+     * 桌面端切换导航栏显示/隐藏
+     */
+    toggleDesktop() {
+        if (this.isMobile) return;
+        
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleIcon = document.getElementById('toggle-icon');
+        
+        console.log('切换前状态:', this.isDesktopHidden);
+        
+        if (this.isDesktopHidden) {
+            // 显示导航栏
+            sidebar.classList.remove('hidden');
+            mainContent.classList.remove('sidebar-hidden');
+            if (toggleIcon) toggleIcon.textContent = '◀';
+            this.isDesktopHidden = false;
+            console.log('已显示导航栏');
+        } else {
+            // 隐藏导航栏
+            sidebar.classList.add('hidden');
+            mainContent.classList.add('sidebar-hidden');
+            if (toggleIcon) toggleIcon.textContent = '▶';
+            this.isDesktopHidden = true;
+            console.log('已隐藏导航栏');
+        }
+        
+        // 强制更新主内容边距
+        this.updateMainContentMargin();
+        
+        this.saveState();
     }
 
     /**
@@ -269,11 +326,22 @@ class ResponsiveSidebar {
             mainContent.style.marginLeft = '0';
         } else {
             const width = window.innerWidth;
-            if (width >= this.breakpoints.tablet) {
-                mainContent.style.marginLeft = '260px';
+            let targetMargin;
+            
+            if (this.isDesktopHidden) {
+                // 隐藏状态：只留40px给按钮
+                targetMargin = '40px';
             } else {
-                mainContent.style.marginLeft = '220px';
+                // 显示状态：根据屏幕宽度设置
+                if (width >= this.breakpoints.tablet) {
+                    targetMargin = '260px';
+                } else {
+                    targetMargin = '220px';
+                }
             }
+            
+            mainContent.style.marginLeft = targetMargin;
+            console.log('更新主内容边距:', targetMargin);
         }
     }
 
@@ -324,6 +392,9 @@ class ResponsiveSidebar {
             case 'faq':
                 this.handleFaqAction();
                 break;
+            case 'account':
+                this.handleAccountAction();
+                break;
         }
         
         // 移动端点击后自动收起
@@ -362,11 +433,11 @@ class ResponsiveSidebar {
                 '是否放弃当前修改并跳转到编辑页面？',
                 () => {
                     localStorage.removeItem('hasUnsavedChanges');
-                    this.showToast('编辑功能即将推出！', 'info');
+                    window.location.href = 'edit.html';
                 }
             );
         } else {
-            this.showToast('编辑功能即将推出！', 'info');
+            window.location.href = 'edit.html';
         }
     }
 
@@ -433,6 +504,134 @@ class ResponsiveSidebar {
     }
 
     /**
+     * 账号按钮处理 - 改为直接显示账号卡片而不是弹窗
+     */
+    handleAccountAction() {
+        // 创建账号卡片HTML
+        const accountCardHTML = `
+            <div class="account-card">
+                <!-- 账号头部 -->
+                <div class="account-header">
+                    <div style="display: flex; align-items: center;">
+                        <div class="account-avatar">🎵</div>
+                        <div class="account-info">
+                            <div class="email">usgshhsysygs@gmail.com</div>
+                            <div class="signin-method">Signed in with Google</div>
+                        </div>
+                    </div>
+                    <button class="signout-btn" onclick="ResponsiveSidebarInstance.handleLogout()">Sign Out</button>
+                </div>
+                
+                <!-- 奖励额度区域 -->
+                <div class="bonus-section">
+                    <div>
+                        <div class="bonus-label">Bonus Credits</div>
+                        <div class="bonus-value">Credit</div>
+                    </div>
+                    <div>
+                        <div class="bonus-label">Expiry</div>
+                        <div class="bonus-value">30 days</div>
+                    </div>
+                    <div>
+                        <div class="bonus-label">Est. Usage</div>
+                        <div class="bonus-value">17 used / 500 total</div>
+                    </div>
+                </div>
+                
+                <!-- 使用额度区域 -->
+                <div class="usage-section">
+                    <div class="usage-header">
+                        <div>
+                            <div class="usage-title">Estimated Usage</div>
+                            <div class="usage-reset">resets on 01/01</div>
+                        </div>
+                        <div class="plan-tag">freebeat Free</div>
+                    </div>
+                    <div class="usage-detail">
+                        <span>Credit</span>
+                        <span>0 used / 50 covered in plan</span>
+                    </div>
+                    <div class="usage-bar">
+                        <div class="usage-fill"></div>
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="action-section">
+                    <button class="upgrade-btn" onclick="ResponsiveSidebarInstance.showToast('升级功能即将推出！', 'info')">Upgrade Plan</button>
+                    <a class="support-link" onclick="ResponsiveSidebarInstance.showToast('联系支持功能即将推出！', 'info')">Contact Billing Support</a>
+                </div>
+                
+                <!-- 关闭按钮 -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="close-account-btn" onclick="ResponsiveSidebarInstance.closeAccountCard()">关闭</button>
+                </div>
+            </div>
+        `;
+
+        // 创建账号卡片容器
+        const accountContainer = document.createElement('div');
+        accountContainer.id = 'account-container';
+        accountContainer.className = 'account-card-overlay';
+        accountContainer.innerHTML = accountCardHTML;
+
+        // 点击背景关闭
+        accountContainer.addEventListener('click', (e) => {
+            if (e.target === accountContainer) {
+                this.closeAccountCard();
+            }
+        });
+
+        // 添加键盘支持
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                this.closeAccountCard();
+                document.removeEventListener('keydown', handleKeyDown);
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+
+        document.body.appendChild(accountContainer);
+
+        // 移动端收起导航栏
+        if (this.isMobile && this.isExpanded) {
+            this.collapse();
+        }
+    }
+
+    /**
+     * 关闭账号卡片
+     */
+    closeAccountCard() {
+        const accountContainer = document.getElementById('account-container');
+        if (accountContainer) {
+            accountContainer.remove();
+        }
+    }
+
+    /**
+     * 退出登录处理
+     */
+    handleLogout() {
+        this.showConfirmDialog(
+            '确定要退出登录吗？',
+            () => {
+                // 清除本地存储的用户数据
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userInfo');
+                localStorage.removeItem('hasUnsavedChanges');
+                
+                this.showToast('已安全退出登录', 'success');
+                
+                // 延迟跳转到登录页面或首页
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+        );
+    }
+
+    /**
      * 跳转到首页
      */
     goToHome() {
@@ -455,6 +654,7 @@ class ResponsiveSidebar {
         const state = {
             isExpanded: this.isExpanded,
             isMobile: this.isMobile,
+            isDesktopHidden: this.isDesktopHidden,
             timestamp: Date.now()
         };
         localStorage.setItem('sidebarState', JSON.stringify(state));
@@ -475,6 +675,20 @@ class ResponsiveSidebar {
                             this.expand();
                         } else {
                             this.collapse();
+                        }
+                    } else if (!this.isMobile && typeof state.isDesktopHidden !== 'undefined') {
+                        this.isDesktopHidden = state.isDesktopHidden;
+                        if (this.isDesktopHidden) {
+                            const sidebar = document.querySelector('.sidebar');
+                            const mainContent = document.querySelector('.main-content');
+                            const toggleIcon = document.getElementById('toggle-icon');
+                            
+                            sidebar.classList.add('hidden');
+                            mainContent.classList.add('sidebar-hidden');
+                            if (toggleIcon) toggleIcon.textContent = '▶';
+                            
+                            // 更新边距
+                            this.updateMainContentMargin();
                         }
                     }
                 }

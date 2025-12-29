@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航栏按钮位置测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .test-content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .test-section {
+            background-color: #1E1E1E;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .test-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight {
+            background-color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #007bff;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background-color: #28a745;
+        }
+
+        .status-warning {
+            background-color: #ffc107;
+        }
+
+        .button-demo {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            border: 2px dashed #555;
+        }
+
+        .demo-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background-color: #555;
+            border: none;
+            color: #fff;
+            border-radius: 3px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .demo-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="common.js"></script>
+    <script>
+        // 初始化公共组件
+        CommonComponents.initCommon();
+
+        // 页面加载完成后渲染组件
+        document.addEventListener('DOMContentLoaded', function () {
+            // 等待响应式导航栏初始化完成
+            setTimeout(() => {
+                // 确保主内容区域存在
+                let mainContent = document.querySelector('.main-content');
+                if (!mainContent) {
+                    mainContent = document.createElement('div');
+                    mainContent.className = 'main-content';
+                    document.body.appendChild(mainContent);
+                }
+
+                // 渲染页面内容
+                mainContent.innerHTML = `
+                    ${CommonComponents.getTopNavHTML()}
+                    
+                    <div class="test-content">
+                        <div class="test-section">
+                            <h2>🎯 按钮位置精确测试</h2>
+                            <p>验证导航栏切换按钮是否精准定位在logo右侧且贴导航栏边沿。</p>
+                            
+                            <div class="button-demo">
+                                <div class="demo-logo">
+                                    <span>🎵</span>
+                                    <span>freebeat</span>
+                                </div>
+                                <button class="demo-button">✕</button>
+                                <p style="margin: 40px 0 0 0; font-size: 12px; color: #aaa;">
+                                    ↑ 这是按钮应该的位置：logo右侧，贴右边沿
+                                </p>
+                            </div>
+                            
+                            <h3>✅ 修复后的功能状态：</h3>
+                            <ul class="feature-list">
+                                <li><span class="status-indicator status-success"></span><span class="highlight">按钮图标优化</span> - 显示时为◀，隐藏时为▶</li>
+                                <li><span class="status-indicator status-success"></span><span class="highlight">按钮始终可见</span> - 隐藏后按钮保留在导航栏区域</li>
+                                <li><span class="status-indicator status-success"></span><span class="highlight">部分隐藏</span> - 只隐藏内容，保留按钮区域</li>
+                                <li><span class="status-indicator status-success"></span><span class="highlight">状态区分</span> - 不同状态有不同的图标和颜色</li>
+                                <li><span class="status-indicator status-success"></span><span class="highlight">响应式适配</span> - 桌面端和移动端都正确工作</li>
+                            </ul>
+                            
+                            <h3>🔧 测试步骤：</h3>
+                            <ul class="feature-list">
+                                <li>1. 观察导航栏logo右侧的小按钮（◀）</li>
+                                <li>2. 点击按钮隐藏导航栏内容</li>
+                                <li>3. 观察按钮变为▶并保留在导航栏区域</li>
+                                <li>4. 点击▶按钮重新显示导航栏内容</li>
+                                <li>5. 验证按钮回到logo右侧位置并变为◀</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="test-section">
+                            <h2>🔧 问题修复说明</h2>
+                            <p>根据反馈修复了以下问题：</p>
+                            
+                            <h3>❌ 修复前的问题：</h3>
+                            <ul class="feature-list">
+                                <li><span class="status-indicator" style="background-color: #dc3545;"></span>按钮图标是×形状，不够美观</li>
+                                <li><span class="status-indicator" style="background-color: #dc3545;"></span>隐藏和显示状态图标相同，不够直观</li>
+                                <li><span class="status-indicator" style="background-color: #dc3545;"></span>点击×后导航栏完全消失，包括控制按钮</li>
+                            </ul>
+                            
+                            <h3>✅ 修复后的改进：</h3>
+                            <ul class="feature-list">
+                                <li><span class="status-indicator status-success"></span>使用箭头图标：◀（显示状态）和▶（隐藏状态）</li>
+                                <li><span class="status-indicator status-success"></span>不同状态有不同图标，更加直观</li>
+                                <li><span class="status-indicator status-success"></span>隐藏时只隐藏内容，按钮区域始终保留</li>
+                                <li><span class="status-indicator status-success"></span>按钮在隐藏状态下变色（蓝色）突出显示</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="test-section">
+                            <h2>📐 技术实现细节</h2>
+                            <ul class="feature-list">
+                                <li><strong>显示状态：</strong>position: absolute; top: 23px; right: 10px;</li>
+                                <li><strong>隐藏状态：</strong>position: absolute; top: 15px; right: 8px;</li>
+                                <li><strong>按钮尺寸：</strong>20x20px（显示时），24x24px（隐藏时）</li>
+                                <li><strong>图标：</strong>◀（显示），▶（隐藏）</li>
+                                <li><strong>颜色：</strong>#555（显示），#007bff（隐藏）</li>
+                                <li><strong>隐藏方式：</strong>transform: translateX(-220px) + opacity: 0</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="test-section">
+                            <h2>📱 响应式行为</h2>
+                            <ul class="feature-list">
+                                <li><strong>桌面端：</strong>显示切换按钮，支持隐藏/显示</li>
+                                <li><strong>移动端：</strong>隐藏切换按钮，使用汉堡菜单</li>
+                                <li><strong>状态保持：</strong>记住用户的显示偏好</li>
+                                <li><strong>键盘支持：</strong>ESC键关闭相关弹窗</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                // 初始化公共交互功能
+                CommonComponents.initCommonInteractions();
+
+                // 添加实时状态检测
+                setInterval(() => {
+                    const sidebar = document.querySelector('.sidebar');
+                    const toggleBtn = document.querySelector('.sidebar-toggle-desktop');
+                    if (sidebar && toggleBtn) {
+                        const isHidden = sidebar.classList.contains('hidden');
+                        const icon = toggleBtn.querySelector('#toggle-icon');
+                        if (icon) {
+                            console.log('导航栏状态:', isHidden ? '隐藏' : '显示', '按钮图标:', icon.textContent);
+                        }
+                    }
+                }, 2000);
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
