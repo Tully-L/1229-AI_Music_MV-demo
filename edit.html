@@ -58,6 +58,28 @@
             overflow-y: auto;
         }
 
+        /* 自定义滚动条样式 - 左侧面板 */
+        .panel-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .panel-content::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+            border-radius: 4px;
+        }
+        .panel-content::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            background-color: #666;
+        }
+        /* Firefox 滚动条样式 - 左侧面板 */
+        .panel-content {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #2a2a2a;
+        }
+
         /* 项目列表 */
         .project-list {
             display: flex;
@@ -262,6 +284,32 @@
             overflow: auto;
         }
 
+        /* 自定义滚动条样式 - 时间轴区域 */
+        .timeline-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .timeline-content::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+            border-radius: 4px;
+        }
+        .timeline-content::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        .timeline-content::-webkit-scrollbar-thumb:hover {
+            background-color: #666;
+        }
+        .timeline-content::-webkit-scrollbar-corner {
+            background-color: #2a2a2a;
+        }
+        /* Firefox 滚动条样式 - 时间轴区域 */
+        .timeline-content {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #2a2a2a;
+        }
+
         .timeline-tracks {
             padding: 15px;
         }
@@ -354,6 +402,28 @@
             flex: 1;
             padding: 15px;
             overflow-y: auto;
+        }
+
+        /* 自定义滚动条样式 - 右侧属性面板 */
+        .properties-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .properties-content::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+            border-radius: 4px;
+        }
+        .properties-content::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        .properties-content::-webkit-scrollbar-thumb:hover {
+            background-color: #666;
+        }
+        /* Firefox 滚动条样式 - 右侧属性面板 */
+        .properties-content {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #2a2a2a;
         }
 
         .property-group {
@@ -518,7 +588,7 @@
                                 <div id="projects-content" class="tab-content active">
                                     <div class="project-list">
                                         <div class="project-item active">
-                                            <div class="thumbnail" style="background-image: url('https://via.placeholder.com/250x80/007bff/fff?text=Project+1');"></div>
+                                            <div class="thumbnail" style="background-image: url('public/img/palceholder (5).png');"></div>
                                             <div class="title">Cyberpunk Music Video</div>
                                             <div class="meta">
                                                 <span>2:30</span>
@@ -526,7 +596,7 @@
                                             </div>
                                         </div>
                                         <div class="project-item">
-                                            <div class="thumbnail" style="background-image: url('https://via.placeholder.com/250x80/28a745/fff?text=Project+2');"></div>
+                                            <div class="thumbnail" style="background-image: url('public/img/palceholder (6).png');"></div>
                                             <div class="title">Storytelling Adventure</div>
                                             <div class="meta">
                                                 <span>3:45</span>
@@ -534,7 +604,7 @@
                                             </div>
                                         </div>
                                         <div class="project-item">
-                                            <div class="thumbnail" style="background-image: url('https://via.placeholder.com/250x80/ffc107/000?text=Project+3');"></div>
+                                            <div class="thumbnail" style="background-image: url('public/img/palceholder (4).png');"></div>
                                             <div class="title">Auto Generated Beat</div>
                                             <div class="meta">
                                                 <span>1:58</span>

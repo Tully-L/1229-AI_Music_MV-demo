@@ -469,7 +469,151 @@ class ResponsiveSidebar {
      * ToolBox 按钮处理
      */
     handleToolboxAction() {
-        this.showToast('工具箱功能即将推出！', 'info');
+        // 创建工具箱弹窗内容
+        const toolboxContent = `
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="text-align: center; color: #aaa; font-size: 14px; margin-bottom: 10px;">
+                    ToolBox 包含的工具主要分为三类，具体列表如下：
+                </div>
+                
+                <!-- Creative Agents 类别 -->
+                <div class="tool-category">
+                    <h3 style="color: #007bff; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                        1. Creative Agents（创意代理类）
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                        <div class="tool-item" data-tool="music-video-agent">Music Video Agent（测试版）</div>
+                        <div class="tool-item hot" data-tool="music-to-video">Music to Music Video（热门）</div>
+                        <div class="tool-item hot" data-tool="ideas-to-video">Ideas to Full-length Video（热门）</div>
+                        <div class="tool-item new" data-tool="translate-dub">Translate & Dub（新增）</div>
+                        <div class="tool-item new" data-tool="image-edit">Image Edit（新增）</div>
+                    </div>
+                </div>
+
+                <!-- Music Apps 类别 -->
+                <div class="tool-category">
+                    <h3 style="color: #28a745; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                        2. Music Apps（音乐类工具）
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                        <div class="tool-item hot" data-tool="music-to-dance">Music to Dance Video（热门）</div>
+                        <div class="tool-item free" data-tool="music-to-lyrics">Music to Lyrics Video（免费）</div>
+                        <div class="tool-item new" data-tool="music-generator">Music Generator（新增）</div>
+                    </div>
+                </div>
+
+                <!-- Video Apps 类别 -->
+                <div class="tool-category">
+                    <h3 style="color: #ffc107; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                        3. Video Apps（视频类工具）
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                        <div class="tool-item hot" data-tool="ai-video-generator">AI Video Generator（热门）</div>
+                        <div class="tool-item" data-tool="ai-video-effect">AI Video Effect</div>
+                        <div class="tool-item new" data-tool="reimagine-videos">Reimagine Videos（新增）</div>
+                        <div class="tool-item new" data-tool="live-portrait">Live Portrait Video（新增）</div>
+                        <div class="tool-item new" data-tool="asmr-video">ASMR Video（新增）</div>
+                        <div class="tool-item new" data-tool="video-soundtrack">Video Soundtrack（新增）</div>
+                        <div class="tool-item new" data-tool="video-extend">Video Extend（新增）</div>
+                        <div class="tool-item new" data-tool="modify-videos">Modify Videos（新增）</div>
+                        <div class="tool-item" data-tool="text-to-video">Text to Video</div>
+                        <div class="tool-item" data-tool="image-to-video">Image to Video</div>
+                        <div class="tool-item" data-tool="transition-video">Transition Video</div>
+                        <div class="tool-item" data-tool="subject-reference">Subject Reference Video</div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .tool-item {
+                    padding: 6px 10px;
+                    background-color: #333;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    font-size: 11px;
+                    text-align: center;
+                    position: relative;
+                    border: 1px solid transparent;
+                }
+                .tool-item:hover {
+                    background-color: #444;
+                    border-color: #555;
+                    transform: translateY(-1px);
+                }
+                .tool-item.hot::after {
+                    content: "🔥";
+                    position: absolute;
+                    top: -3px;
+                    right: -3px;
+                    font-size: 8px;
+                }
+                .tool-item.new::after {
+                    content: "✨";
+                    position: absolute;
+                    top: -3px;
+                    right: -3px;
+                    font-size: 8px;
+                }
+                .tool-item.free::after {
+                    content: "💎";
+                    position: absolute;
+                    top: -3px;
+                    right: -3px;
+                    font-size: 8px;
+                }
+                .tool-category {
+                    background-color: #1a1a1a;
+                    padding: 12px;
+                    border-radius: 6px;
+                    border: 1px solid #333;
+                }
+            </style>
+        `;
+
+        // 使用 CommonComponents.ModalManager.create 创建弹窗
+        if (window.CommonComponents && window.CommonComponents.ModalManager) {
+            const modal = window.CommonComponents.ModalManager.create({
+                title: 'ToolBox - 工具箱',
+                content: toolboxContent,
+                width: '800px',
+                customClass: 'toolbox-modal', // 添加自定义类
+                buttons: [
+                    {
+                        text: '关闭',
+                        type: 'secondary'
+                    }
+                ]
+            });
+
+            // 为工具项添加点击事件
+            const toolItems = modal.querySelectorAll('.tool-item');
+            toolItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const toolName = item.textContent;
+                    const toolId = item.getAttribute('data-tool');
+                    
+                    // 根据工具类型显示不同的提示
+                    if (item.classList.contains('hot')) {
+                        this.showToast(`正在启动热门工具：${toolName}`, 'success');
+                    } else if (item.classList.contains('new')) {
+                        this.showToast(`正在启动新功能：${toolName}`, 'info');
+                    } else if (item.classList.contains('free')) {
+                        this.showToast(`正在启动免费工具：${toolName}`, 'success');
+                    } else {
+                        this.showToast(`正在启动工具：${toolName}`, 'info');
+                    }
+                    
+                    // 关闭弹窗
+                    setTimeout(() => {
+                        window.CommonComponents.ModalManager.close(modal);
+                    }, 1000);
+                });
+            });
+        } else {
+            // 降级处理
+            this.showToast('ToolBox 功能加载中...', 'info');
+        }
     }
 
     /**

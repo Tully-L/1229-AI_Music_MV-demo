@@ -289,6 +289,32 @@ const CommonComponents = {
             position: relative;
             border: 1px solid #333;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-left: 120px; /* 向右偏移，避免被导航栏遮挡 */
+        }
+        /* ToolBox 弹窗特殊样式 */
+        .modal.toolbox-modal {
+            margin-left: 150px; /* ToolBox 弹窗额外向右偏移 */
+        }
+        /* 自定义滚动条样式 */
+        .modal::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+            border-radius: 4px;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        .modal::-webkit-scrollbar-thumb:hover {
+            background-color: #666;
+        }
+        /* Firefox 滚动条样式 */
+        .modal {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #2a2a2a;
         }
         .modal-header {
             display: flex;
@@ -433,9 +459,20 @@ const CommonComponents = {
             .modal {
                 width: 80%;
                 margin: 20px;
+                margin-left: 20px; /* 移动端不需要额外偏移 */
+            }
+            .modal.toolbox-modal {
+                margin-left: 20px; /* 移动端重置偏移 */
             }
             .sidebar {
                 width: 150px;
+            }
+        }
+        
+        /* 平板适配 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .modal.toolbox-modal {
+                margin-left: 100px; /* 平板端适中偏移 */
             }
         }
     `,
@@ -512,10 +549,10 @@ const CommonComponents = {
         <div class="tutorials">
             <h3>Agent Feature Tutorials</h3>
             <div class="tutorial-cards">
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+1');"></div>
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+2');"></div>
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+3');"></div>
-                <div class="tutorial-card" style="background-image: url('https://via.placeholder.com/150x80/666/fff?text=TUTORIAL+4');"></div>
+                <div class="tutorial-card" style="background-image: url('public/img/palceholder (8).png');"></div>
+                <div class="tutorial-card" style="background-image: url('public/img/palceholder (9).png');"></div>
+                <div class="tutorial-card" style="background-image: url('public/img/palceholder (10).png');"></div>
+                <div class="tutorial-card" style="background-image: url('public/img/palceholder (2).png');"></div>
 
             </div>
         </div>
@@ -539,7 +576,7 @@ const CommonComponents = {
             </div>
             <div class="chart-cards">
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+1');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (1).png');"></div>
                     <div class="card-info">
                         <div class="remix">255 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -547,7 +584,7 @@ const CommonComponents = {
                     </div>
                 </div>
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+2');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (2).png');"></div>
                     <div class="card-info">
                         <div class="remix">255 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -555,7 +592,7 @@ const CommonComponents = {
                     </div>
                 </div>
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+3');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (3).png');"></div>
                     <div class="card-info">
                         <div class="remix">125 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -563,7 +600,7 @@ const CommonComponents = {
                     </div>
                 </div>
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+4');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (4).png');"></div>
                     <div class="card-info">
                         <div class="remix">95 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -571,7 +608,7 @@ const CommonComponents = {
                     </div>
                 </div>
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+5');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (5).png');"></div>
                     <div class="card-info">
                         <div class="remix">79 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -579,7 +616,7 @@ const CommonComponents = {
                     </div>
                 </div>
                 <div class="chart-card">
-                    <div class="card-img" style="background-image: url('https://via.placeholder.com/120x120/777/fff?text=ART+6');"></div>
+                    <div class="card-img" style="background-image: url('public/img/palceholder (6).png');"></div>
                     <div class="card-info">
                         <div class="remix">52 REMIX</div>
                         <div class="title">The Fate of Ophelia</div>
@@ -606,16 +643,17 @@ const CommonComponents = {
                 height = 'auto',
                 buttons = [],
                 closable = true,
-                onClose = null
+                onClose = null,
+                customClass = '' // 新增自定义CSS类参数
             } = options;
 
             // 创建遮罩层
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
-            
+
             // 创建弹窗
             const modal = document.createElement('div');
-            modal.className = 'modal';
+            modal.className = `modal ${customClass}`.trim(); // 添加自定义类
             modal.style.width = width;
             if (height !== 'auto') {
                 modal.style.height = height;
@@ -624,11 +662,11 @@ const CommonComponents = {
             // 弹窗头部
             const header = document.createElement('div');
             header.className = 'modal-header';
-            
+
             const titleEl = document.createElement('div');
             titleEl.className = 'modal-title';
             titleEl.textContent = title;
-            
+
             const closeBtn = document.createElement('button');
             closeBtn.className = 'modal-close';
             closeBtn.innerHTML = '×';
@@ -654,7 +692,7 @@ const CommonComponents = {
             // 弹窗按钮
             const actionsEl = document.createElement('div');
             actionsEl.className = 'modal-actions';
-            
+
             buttons.forEach(btn => {
                 const button = document.createElement('button');
                 button.className = `modal-btn ${btn.type || 'secondary'}`;
@@ -754,13 +792,13 @@ const CommonComponents = {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
-            
+
             document.body.appendChild(toast);
-            
+
             setTimeout(() => {
                 toast.classList.add('active');
             }, 10);
-            
+
             setTimeout(() => {
                 toast.classList.remove('active');
                 setTimeout(() => {
@@ -904,26 +942,111 @@ const CommonComponents = {
             if (btn.textContent.includes('ToolBox')) {
                 btn.addEventListener('click', () => {
                     const toolboxOptions = `
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <div class="tool-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                                <h4 style="margin: 0 0 5px 0;">格式转换</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">支持多种音频、视频格式转换</p>
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div style="text-align: center; color: #aaa; font-size: 14px; margin-bottom: 10px;">
+                                ToolBox 包含的工具主要分为三类，具体列表如下：
                             </div>
-                            <div class="tool-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                                <h4 style="margin: 0 0 5px 0;">音频裁剪</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">精确裁剪音频片段，支持淡入淡出</p>
+                            
+                            <!-- Creative Agents 类别 -->
+                            <div class="tool-category">
+                                <h3 style="color: #007bff; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                                    1. Creative Agents（创意代理类）
+                                </h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                                    <div class="tool-item" data-tool="music-video-agent">Music Video Agent（测试版）</div>
+                                    <div class="tool-item hot" data-tool="music-to-video">Music to Music Video（热门）</div>
+                                    <div class="tool-item hot" data-tool="ideas-to-video">Ideas to Full-length Video（热门）</div>
+                                    <div class="tool-item new" data-tool="translate-dub">Translate & Dub（新增）</div>
+                                    <div class="tool-item new" data-tool="image-edit">Image Edit（新增）</div>
+                                </div>
                             </div>
-                            <div class="tool-option" style="padding: 15px; background-color: #333; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#444'" onmouseout="this.style.backgroundColor='#333'">
-                                <h4 style="margin: 0 0 5px 0;">批量处理</h4>
-                                <p style="margin: 0; color: #aaa; font-size: 12px;">批量处理多个文件，提高工作效率</p>
+
+                            <!-- Music Apps 类别 -->
+                            <div class="tool-category">
+                                <h3 style="color: #28a745; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                                    2. Music Apps（音乐类工具）
+                                </h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                                    <div class="tool-item hot" data-tool="music-to-dance">Music to Dance Video（热门）</div>
+                                    <div class="tool-item free" data-tool="music-to-lyrics">Music to Lyrics Video（免费）</div>
+                                    <div class="tool-item new" data-tool="music-generator">Music Generator（新增）</div>
+                                </div>
+                            </div>
+
+                            <!-- Video Apps 类别 -->
+                            <div class="tool-category">
+                                <h3 style="color: #ffc107; margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                                    3. Video Apps（视频类工具）
+                                </h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                                    <div class="tool-item hot" data-tool="ai-video-generator">AI Video Generator（热门）</div>
+                                    <div class="tool-item" data-tool="ai-video-effect">AI Video Effect</div>
+                                    <div class="tool-item new" data-tool="reimagine-videos">Reimagine Videos（新增）</div>
+                                    <div class="tool-item new" data-tool="live-portrait">Live Portrait Video（新增）</div>
+                                    <div class="tool-item new" data-tool="asmr-video">ASMR Video（新增）</div>
+                                    <div class="tool-item new" data-tool="video-soundtrack">Video Soundtrack（新增）</div>
+                                    <div class="tool-item new" data-tool="video-extend">Video Extend（新增）</div>
+                                    <div class="tool-item new" data-tool="modify-videos">Modify Videos（新增）</div>
+                                    <div class="tool-item" data-tool="text-to-video">Text to Video</div>
+                                    <div class="tool-item" data-tool="image-to-video">Image to Video</div>
+                                    <div class="tool-item" data-tool="transition-video">Transition Video</div>
+                                    <div class="tool-item" data-tool="subject-reference">Subject Reference Video</div>
+                                </div>
                             </div>
                         </div>
+                        
+                        <style>
+                            .tool-item {
+                                padding: 8px 12px;
+                                background-color: #333;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                transition: all 0.3s;
+                                font-size: 12px;
+                                text-align: center;
+                                position: relative;
+                                border: 1px solid transparent;
+                            }
+                            .tool-item:hover {
+                                background-color: #444;
+                                border-color: #555;
+                                transform: translateY(-1px);
+                            }
+                            .tool-item.hot::after {
+                                content: "🔥";
+                                position: absolute;
+                                top: -5px;
+                                right: -5px;
+                                font-size: 10px;
+                            }
+                            .tool-item.new::after {
+                                content: "✨";
+                                position: absolute;
+                                top: -5px;
+                                right: -5px;
+                                font-size: 10px;
+                            }
+                            .tool-item.free::after {
+                                content: "💎";
+                                position: absolute;
+                                top: -5px;
+                                right: -5px;
+                                font-size: 10px;
+                            }
+                            .tool-category {
+                                background-color: #1a1a1a;
+                                padding: 15px;
+                                border-radius: 6px;
+                                border: 1px solid #333;
+                            }
+                        </style>
                     `;
 
                     const modal = CommonComponents.ModalManager.create({
-                        title: '工具箱',
+                        title: 'ToolBox - 工具箱',
                         content: toolboxOptions,
-                        width: '600px',
+                        width: '800px',
+                        customClass: 'toolbox-modal', // 添加自定义类
                         buttons: [
                             {
                                 text: '关闭',
@@ -932,13 +1055,28 @@ const CommonComponents = {
                         ]
                     });
 
-                    // 为工具选项添加点击事件
-                    const options = modal.querySelectorAll('.tool-option');
-                    options.forEach((option, index) => {
-                        option.addEventListener('click', () => {
-                            const tools = ['格式转换', '音频裁剪', '批量处理'];
-                            CommonComponents.ToastManager.show(`正在打开 ${tools[index]} 工具`, 'info');
-                            CommonComponents.ModalManager.close(modal);
+                    // 为工具项添加点击事件
+                    const toolItems = modal.querySelectorAll('.tool-item');
+                    toolItems.forEach(item => {
+                        item.addEventListener('click', () => {
+                            const toolName = item.textContent;
+                            const toolId = item.getAttribute('data-tool');
+
+                            // 根据工具类型显示不同的提示
+                            if (item.classList.contains('hot')) {
+                                CommonComponents.ToastManager.show(`正在启动热门工具：${toolName}`, 'success');
+                            } else if (item.classList.contains('new')) {
+                                CommonComponents.ToastManager.show(`正在启动新功能：${toolName}`, 'info');
+                            } else if (item.classList.contains('free')) {
+                                CommonComponents.ToastManager.show(`正在启动免费工具：${toolName}`, 'success');
+                            } else {
+                                CommonComponents.ToastManager.show(`正在启动工具：${toolName}`, 'info');
+                            }
+
+                            // 这里可以添加具体的工具跳转逻辑
+                            setTimeout(() => {
+                                CommonComponents.ModalManager.close(modal);
+                            }, 1000);
                         });
                     });
                 });
@@ -1110,7 +1248,7 @@ const CommonComponents = {
         const dropdown = document.querySelector('.dropdown');
         if (dropdown) {
             dropdown.style.position = 'relative';
-            
+
             dropdown.addEventListener('click', () => {
                 // 检查是否已存在下拉菜单
                 let existingMenu = dropdown.querySelector('.dropdown-menu');
@@ -1130,7 +1268,7 @@ const CommonComponents = {
                 `;
 
                 dropdown.appendChild(menu);
-                
+
                 // 为菜单项添加点击事件
                 const items = menu.querySelectorAll('.dropdown-item');
                 items.forEach(item => {
@@ -1204,7 +1342,7 @@ const CommonComponents = {
                 // 标签页切换功能
                 const tabs = modal.querySelectorAll('.coin-tab');
                 const content = modal.querySelector('#coin-content');
-                
+
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         tabs.forEach(t => {
@@ -1217,7 +1355,7 @@ const CommonComponents = {
                         const tabType = tab.getAttribute('data-tab');
                         let newContent = '';
 
-                        switch(tabType) {
+                        switch (tabType) {
                             case 'income':
                                 newContent = `
                                     <div class="coin-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #444;">
@@ -1438,7 +1576,7 @@ const CommonComponents = {
                                 };
                                 localStorage.setItem('selectedMusic', JSON.stringify(selectedMusic));
                                 CommonComponents.ToastManager.show('已选择该音乐', 'success');
-                                
+
                                 // 跳转到创作页面
                                 setTimeout(() => {
                                     window.location.href = 'create.html';
