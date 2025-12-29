@@ -867,14 +867,6 @@ const CommonComponents = {
             });
         }
 
-        // Agent 按钮 - 简单提示
-        const agentBtn = document.querySelector('.toggle-btn');
-        if (agentBtn && agentBtn.textContent.includes('Agent')) {
-            agentBtn.addEventListener('click', () => {
-                CommonComponents.ToastManager.show('Agent 功能即将推出！', 'info');
-            });
-        }
-
         // ToolBox 按钮 - 居中工具选择弹窗
         const toolboxBtns = document.querySelectorAll('.toggle-btn');
         toolboxBtns.forEach(btn => {
