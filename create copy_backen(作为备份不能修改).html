@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freebeat - Music Creation Platform</title>
+    <style>
+        /* 全局样式重置与基础配置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* 无衬线字体，匹配描述 */
+            color: #FFFFFF; /* 默认白色文字 */
+            -webkit-font-smoothing: antialiased; /* 文字抗锯齿 */
+        }
+
+        body {
+            background-color: rgb(18, 18, 18); /* 全局主背景色 */
+            display: flex;
+            height: 100vh; /* 页面高度占满视口 */
+            overflow: hidden; /* 隐藏滚动条 */
+        }
+
+        /* 顶部通栏样式 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px; /* 固定高度 */
+            background-color: rgb(18, 18, 18);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px; /* 元素间距 */
+        }
+
+        .count提示 {
+            font-size: 14px;
+            color: rgb(76, 175, 80); /* 绿色数值 */
+        }
+
+        .discord-btn {
+            background-color: rgb(33, 150, 243); /* 蓝色按钮背景 */
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 左侧导航栏样式 */
+        .sidebar {
+            width: 180px; /* 固定宽度 */
+            background-color: rgb(18, 18, 18);
+            padding-top: 60px; /* 避开顶部通栏 */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-left: 12px;
+        }
+
+        .sidebar-top-btns {
+            display: flex;
+            gap: 8px; /* Create/Edit按钮间距 */
+            margin-bottom: 16px;
+        }
+
+        .sidebar-btn {
+            width: 60px;
+            height: 28px;
+            background-color: rgb(18, 18, 18);
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .sidebar-features {
+            margin-bottom: 24px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .pro-tag {
+            font-size: 8px;
+            color: rgb(255, 215, 0); /* 黄色Pro标识 */
+            margin-right: 4px;
+        }
+
+        .switch {
+            width: 16px;
+            height: 8px;
+            background-color: rgb(76, 175, 80); /* 开启状态背景 */
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #FFFFFF; /* 滑块白色 */
+            border-radius: 50%;
+            top: 1px;
+            right: 1px;
+        }
+
+        .dropdown-arrow {
+            font-size: 12px;
+            color: rgb(160, 160, 160); /* 浅灰箭头 */
+        }
+
+        .history-section {
+            margin-bottom: 40px;
+        }
+
+        .history-title {
+            font-size: 12px;
+            color: rgb(160, 160, 160); /* 浅灰标题 */
+            text-transform: uppercase; /* 大写 */
+            margin-bottom: 8px;
+        }
+
+        .new-task-btn {
+            width: 100px;
+            height: 28px;
+            background-color: #FFFFFF;
+            color: #000000;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            padding: 4px 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .new-task-btn::before {
+            content: '+';
+            color: #000000;
+        }
+
+        .history-item {
+            font-size: 12px;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto; /* 靠底部对齐 */
+            padding-bottom: 20px;
+        }
+
+        .bottom-nav-item {
+            font-size: 12px;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .dnapo-tag {
+            font-size: 12px;
+            color: #FFFFFF;
+            margin-top: 8px;
+        }
+
+        /* 右侧主内容区样式 */
+        .main-content {
+            flex: 1; /* 占剩余宽度 */
+            background-color: rgb(26, 26, 26); /* 主内容区背景 */
+            margin-left: 180px; /* 避开侧边栏 */
+            padding-top: 60px; /* 避开顶部通栏 */
+            padding-left: 20px;
+            height: 100vh;
+            overflow-y: auto; /* 内容超出可滚动 */
+        }
+
+        /* 顶部下拉菜单 */
+        .top-dropdown {
+            font-size: 16px;
+            color: #FFFFFF;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 创作引导区 */
+        .creation-section {
+            margin-bottom: 24px;
+        }
+
+        .creation-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .tag-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .tag {
+            background-color: rgb(51, 51, 51);
+            color: #FFFFFF;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .close-tag {
+            color: rgb(160, 160, 160);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .input-container {
+            width: 600px;
+            height: 80px;
+            background-color: rgb(45, 45, 45);
+            border: 1px solid rgb(68, 68, 68);
+            border-radius: 6px;
+            margin: 0 auto 8px;
+            padding: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .earth-icon {
+            font-size: 16px;
+            color: rgb(224, 224, 224);
+        }
+
+        .input-placeholder {
+            font-size: 14px;
+            color: rgb(160, 160, 160);
+        }
+
+        .feature-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+
+        .feature-tag {
+            font-size: 12px;
+            color: rgb(160, 160, 160);
+        }
+
+        .edit-icon {
+            font-size: 14px;
+            color: rgb(224, 224, 224);
+            margin-left: 8px;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-option {
+            font-size: 12px;
+            color: rgb(160, 160, 160);
+        }
+
+        .create-btn {
+            background-color: rgb(33, 150, 243);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 14px;
+            margin-left: 12px;
+            cursor: pointer;
+        }
+
+        /* Agent/Tutorials区 */
+        .agent-tutorial-section {
+            margin-bottom: 24px;
+        }
+
+        .section-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .tab {
+            font-size: 14px;
+            color: rgb(160, 160, 160);
+            cursor: pointer;
+        }
+
+        .tab.active {
+            color: #FFFFFF;
+        }
+
+        .video-thumbnails {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .thumbnail {
+            width: 120px;
+            height: 80px;
+            background-color: rgb(51, 51, 51); /* 占位背景 */
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background-color: rgb(255, 0, 0); /* 红色播放按钮 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .play-btn::after {
+            content: '▶';
+            color: #FFFFFF;
+            font-size: 10px;
+            margin-left: 2px;
+        }
+
+        /* Top Charts区 */
+        .top-charts-section {
+            margin-bottom: 20px;
+        }
+
+        .charts-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .charts-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .chart-tab {
+            font-size: 12px;
+            color: rgb(160, 160, 160);
+        }
+
+        .view-charts {
+            font-size: 12px;
+            color: rgb(160, 160, 160);
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        .music-cards {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .music-card {
+            width: 100px;
+            height: 140px;
+            background-color: rgb(51, 51, 51); /* 占位背景 */
+            border-radius: 4px;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-cover {
+            width: 100%;
+            height: 80px;
+            background-color: rgb(70, 70, 70); /* 封面占位 */
+            border-radius: 2px;
+            margin-bottom: 4px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            color: #FFFFFF;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-artist {
+            font-size: 10px;
+            color: rgb(160, 160, 160);
+            margin-bottom: 2px;
+        }
+
+        .card-remix {
+            font-size: 10px;
+            color: rgb(255, 0, 0); /* 红色REMIX标识 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部通栏 -->
+    <header>
+        <div class="logo">#freebeat</div>
+        <div class="header-right">
+            <span class="count提示">+1000</span>
+            <button class="discord-btn">Join our Discord</button>
+        </div>
+    </header>
+
+    <!-- 左侧导航栏 -->
+    <aside class="sidebar">
+        <!-- 顶部操作按钮 -->
+        <div class="sidebar-top-btns">
+            <button class="sidebar-btn">Create</button>
+            <button class="sidebar-btn">Edit</button>
+        </div>
+
+
+        <!-- 功能选项 -->
+        <div class="sidebar-features">
+            <div class="feature-item">
+                <span>Agent</span>
+                <div>
+                    <span class="pro-tag">Pro</span>
+                    <div class="switch"></div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span>ToolBox</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+        </div>
+
+        <!-- 历史记录区 -->
+        <div class="history-section">
+            <div class="history-title">HISTORY</div>
+            <button class="new-task-btn">New task</button>
+            <div class="history-item">A dreamy cyberpunk cl...</div>
+            <div class="history-item">A dreamy cyberpunk cl...</div>
+            <div class="history-item">A dreamy cyberpunk cl...</div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="sidebar-bottom">
+            <div class="bottom-nav-item">Refer & Earn</div>
+            <div class="bottom-nav-item">Subscribe</div>
+            <div class="bottom-nav-item">FAQs</div>
+            <div class="bottom-nav-item">
+                <span>Language</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dnapo-tag">dnapo</div>
+        </div>
+    </aside>
+
+    <!-- 右侧主内容区 -->
+    <main class="main-content">
+        <!-- 顶部下拉菜单 -->
+        <div class="top-dropdown">
+            Music Video <span class="dropdown-arrow">▼</span>
+        </div>
+
+        <!-- 创作引导区 -->
+        <section class="creation-section">
+            <h2 class="creation-title">What do you want to create?</h2>
+            <div class="tag-bar">
+                <div class="tag">Storytelling</div>
+                <div class="tag">Naam Chale - Off.x0 <span class="close-tag">×</span></div>
+            </div>
+            <div class="input-container">
+                <span class="earth-icon">🌐</span>
+                <div class="input-placeholder">Describe the vibe, or let us surprise you by prompting "Make a video for this s..."</div>
+            </div>
+            <div class="feature-tags">
+                <span class="feature-tag">Character</span>
+                <span class="feature-tag">Lyrics</span>
+                <span class="feature-tag">Style</span>
+                <span class="feature-tag">Remove watermark <div class="switch" style="display: inline-block;"></div></span>
+                <span class="edit-icon">✏️</span>
+            </div>
+            <div class="action-bar">
+                <span class="action-option">Fast</span>
+                <span class="action-option">Expert</span>
+                <span class="action-option">Auto <div class="switch" style="display: inline-block;"></div></span>
+                <span class="action-option">Public <span class="dropdown-arrow">▼</span></span>
+                <button class="create-btn">Create +</button>
+            </div>
+        </section>
+
+        <!-- Agent Feature/Tutorials区 -->
+        <section class="agent-tutorial-section">
+            <div class="section-tabs">
+                <div class="tab">Agent Feature</div>
+                <div class="tab active">Tutorials</div>
+            </div>
+            <div class="video-thumbnails">
+                <div class="thumbnail">
+                    <div class="play-btn"></div>
+                </div>
+                <div class="thumbnail">
+                    <div class="play-btn"></div>
+                </div>
+                <div class="thumbnail">
+                    <div class="play-btn"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Charts区 -->
+        <section class="top-charts-section">
+            <h3 class="charts-title">Top Charts</h3>
+            <div class="charts-tabs">
+                <span class="chart-tab">Billboard 100</span>
+                <span class="chart-tab">This is Frequency</span>
+                <span class="chart-tab">New Music Friday</span>
+                <span class="chart-tab">New Music 2025</span>
+                <span class="chart-tab">Global Charts</span>
+                <span class="view-charts">View Charts ></span>
+            </div>
+            <div class="music-cards">
+                <div class="music-card">
+                    <div class="card-cover"></div>
+                    <div class="card-title">The Fate of Ophelia</div>
+                    <div class="card-artist">Taylor Swift</div>
+                    <div class="card-remix">255 REMIX</div>
+                </div>
+                <div class="music-card">
+                    <div class="card-cover"></div>
+                    <div class="card-title">The Fate of Ophelia</div>
+                    <div class="card-artist">Taylor Swift</div>
+                    <div class="card-remix">226 REMIX</div>
+                </div>
+                <div class="music-card">
+                    <div class="card-cover"></div>
+                    <div class="card-title">The Fate of Ophelia</div>
+                    <div class="card-artist">Taylor Swift</div>
+                    <div class="card-remix">189 REMIX</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
