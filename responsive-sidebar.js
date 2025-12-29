@@ -260,16 +260,184 @@ class ResponsiveSidebar {
     goToHome() { window.location.href = 'index.html'; }
     changeLanguage(lang) { this.showToast(`语言已切换为 ${lang}`, 'success'); }
 
-    // 响应式相关方法的简化实现
-    handleResize() { /* 简化实现 */ }
-    toggle() { /* 简化实现 */ }
-    toggleDesktop() { /* 简化实现 */ }
-    expand() { /* 简化实现 */ }
-    collapse() { /* 简化实现 */ }
-    updateMainContentMargin() { /* 简化实现 */ }
-    ensureFixed() { /* 简化实现 */ }
-    saveState() { /* 简化实现 */ }
-    restoreState() { /* 简化实现 */ }
+    // 响应式相关方法的完整实现
+    handleResize() {
+        const width = window.innerWidth;
+        const wasMobile = this.isMobile;
+
+        this.isMobile = width < this.breakpoints.mobile;
+
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const mainContent = document.querySelector('.main-content');
+
+        if (this.isMobile) {
+            // 移动端模式
+            if (!wasMobile) {
+                // 从桌面切换到移动端
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('collapsed');
+                mainContent.classList.remove('sidebar-hidden');
+                this.isExpanded = false;
+                this.isDesktopHidden = false;
+            }
+        } else {
+            // 桌面/平板模式
+            sidebar.classList.remove('collapsed', 'expanded');
+            overlay.classList.remove('active');
+            this.isExpanded = false;
+
+            // 恢复桌面端隐藏状态
+            if (this.isDesktopHidden) {
+                sidebar.classList.add('hidden');
+                mainContent.classList.add('sidebar-hidden');
+                const toggleIcon = document.getElementById('toggle-icon');
+                if (toggleIcon) toggleIcon.textContent = '▶';
+            } else {
+                sidebar.classList.remove('hidden');
+                mainContent.classList.remove('sidebar-hidden');
+                const toggleIcon = document.getElementById('toggle-icon');
+                if (toggleIcon) toggleIcon.textContent = '◀';
+            }
+
+            // 更新主内容边距
+            this.updateMainContentMargin();
+        }
+
+        this.saveState();
+    }
+
+    toggle() {
+        if (this.isMobile) {
+            if (this.isExpanded) {
+                this.collapse();
+            } else {
+                this.expand();
+            }
+        }
+    }
+
+    toggleDesktop() {
+        if (this.isMobile) return;
+
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleIcon = document.getElementById('toggle-icon');
+
+        if (this.isDesktopHidden) {
+            // 显示导航栏
+            sidebar.classList.remove('hidden');
+            mainContent.classList.remove('sidebar-hidden');
+            if (toggleIcon) toggleIcon.textContent = '◀';
+            this.isDesktopHidden = false;
+        } else {
+            // 隐藏导航栏
+            sidebar.classList.add('hidden');
+            mainContent.classList.add('sidebar-hidden');
+            if (toggleIcon) toggleIcon.textContent = '▶';
+            this.isDesktopHidden = true;
+        }
+
+        // 强制更新主内容边距
+        this.updateMainContentMargin();
+
+        this.saveState();
+    }
+
+    expand() {
+        if (!this.isMobile) return;
+
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        sidebar.classList.remove('collapsed');
+        sidebar.classList.add('expanded');
+        overlay.classList.add('active');
+
+        this.isExpanded = true;
+        this.saveState();
+
+        // 焦点管理
+        setTimeout(() => {
+            const firstButton = sidebar.querySelector('button, a');
+            if (firstButton) {
+                firstButton.focus();
+            }
+        }, 300);
+    }
+
+    collapse() {
+        if (!this.isMobile) return;
+
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        sidebar.classList.remove('expanded');
+        sidebar.classList.add('collapsed');
+        overlay.classList.remove('active');
+
+        this.isExpanded = false;
+        this.saveState();
+    }
+
+    updateMainContentMargin() {
+        const mainContent = document.querySelector('.main-content');
+        if (!mainContent) return;
+
+        if (this.isMobile) {
+            mainContent.style.marginLeft = '0';
+        } else {
+            const width = window.innerWidth;
+            let targetMargin;
+
+            if (this.isDesktopHidden) {
+                // 隐藏状态：只留40px给按钮
+                targetMargin = '40px';
+            } else {
+                // 显示状态：根据屏幕宽度设置
+                if (width >= this.breakpoints.tablet) {
+                    targetMargin = '260px';
+                } else {
+                    targetMargin = '220px';
+                }
+            }
+
+            mainContent.style.marginLeft = targetMargin;
+        }
+    }
+
+    ensureFixed() {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            // 检查是否偏移，如有偏移则重新固定
+            const rect = sidebar.getBoundingClientRect();
+            if (rect.left !== 0 || rect.top !== 0) {
+                sidebar.style.position = 'fixed';
+                sidebar.style.top = '0';
+                sidebar.style.left = '0';
+            }
+        }
+    }
+
+    saveState() {
+        localStorage.setItem('sidebarState', JSON.stringify({
+            isDesktopHidden: this.isDesktopHidden,
+            isExpanded: this.isExpanded
+        }));
+    }
+
+    restoreState() {
+        try {
+            const saved = localStorage.getItem('sidebarState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                this.isDesktopHidden = state.isDesktopHidden || false;
+                this.isExpanded = state.isExpanded || false;
+            }
+        } catch (e) {
+            console.warn('Failed to restore sidebar state:', e);
+        }
+    }
 
     debounce(func, wait) {
         let timeout;
